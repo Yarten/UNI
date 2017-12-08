@@ -1,1 +1,1 @@
-include ':app', ':utils', ':uniplayer'
+include ':app', ':utils', ':uniplayer', ':unieditor'

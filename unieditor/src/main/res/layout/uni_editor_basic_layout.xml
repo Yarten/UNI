@@ -1,0 +1,66 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/uniEditor_layout_root"
+    android:background="#ddd"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- Content 内容-->
+    <RelativeLayout
+        android:id="@+id/uniEditor_layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/uniEditor_layout_cavans"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginBottom="60dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="20dp"
+            android:background="#fff" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|center_horizontal">
+
+        <Button
+            android:id="@+id/bnt_editor_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/bnt_editor_prev"
+            android:text="PLAY"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/bnt_editor_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/bnt_editor_play"
+            android:text="NEXT"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/bnt_editor_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PREV"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <include
+        android:layout_gravity="start"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:id="@+id/uniEditor_layout_left"
+        layout="@layout/uni_editor_menu_layout"
+        />
+</android.support.v4.widget.DrawerLayout>

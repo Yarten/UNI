@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/UNI.iml" filepath="$PROJECT_DIR$/UNI.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/unieditor/unieditor.iml" filepath="$PROJECT_DIR$/unieditor/unieditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/uniplayer/uniplayer.iml" filepath="$PROJECT_DIR$/uniplayer/uniplayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
     </modules>

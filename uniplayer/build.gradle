@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
     //    applicationId "com.uni.uniplayer"
-        minSdkVersion 23
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
