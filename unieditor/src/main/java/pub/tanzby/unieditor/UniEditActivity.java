@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 
 public class UniEditActivity extends AppCompatActivity
     implements
-        DrawerLayout.DrawerListener,
         View.OnTouchListener,
         ScaleGestureDetector.OnScaleGestureListener
 
@@ -28,6 +27,7 @@ public class UniEditActivity extends AppCompatActivity
     ConstraintLayout MENUVIEW;      // 左侧滑动菜单
     RelativeLayout   CAVANS;        // 主屏画板
     RelativeLayout   MAINContent;   // 主屏
+    DrawerLayout     ROOT;          // 根
 
     /*
      * 管理器及变量
@@ -61,6 +61,7 @@ public class UniEditActivity extends AppCompatActivity
         MENUVIEW = findViewById(R.id.uniEditor_layout_left);
         CAVANS   = findViewById(R.id.uniEditor_layout_cavans);
         MAINContent = findViewById(R.id.uniEditor_layout_main);
+        ROOT     = findViewById(R.id.uniEditor_layout_root);
 
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
     }
@@ -133,8 +134,6 @@ public class UniEditActivity extends AppCompatActivity
 
                 if(!isDrawerOpen)
                     MAINContent.scrollBy(-offsetX, -offsetY);
-
-                Log.i(TAG,"offset "+offsetX+" "+offsetY);
 
                 lastX = rawX;
                 lastY = rawY;
@@ -210,15 +209,4 @@ public class UniEditActivity extends AppCompatActivity
     public void onScaleEnd(ScaleGestureDetector detector) {
     }
 
-    @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {  }
-    @Override
-    public void onDrawerOpened(View drawerView) {  }
-    @Override
-    public void onDrawerClosed(View drawerView) {  }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-        Log.i(TAG,""+newState);
-    }
 }
