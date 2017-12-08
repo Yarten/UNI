@@ -1,18 +1,36 @@
 package pub.tanzby.unieditor;
 
+import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.uni.utils.Graphicstools;
+import com.uni.utils.Property;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UniEditActivity extends AppCompatActivity
@@ -29,6 +47,10 @@ public class UniEditActivity extends AppCompatActivity
     RelativeLayout   MAINContent;   // 主屏
     DrawerLayout     ROOT;          // 根
 
+    Button bnt_play;
+    Button bnt_next;
+    Button bnt_prev;
+
     /*
      * 管理器及变量
      */
@@ -41,6 +63,9 @@ public class UniEditActivity extends AppCompatActivity
     float SCALE_FACTOR;
     boolean isDrawerOpen;
 
+    UNIMenuElementAdapter mAdapter;
+    List<UNIElementView> u = new ArrayList<>();
+
     private final String TAG = "EDITOR";
 
     @Override
@@ -50,6 +75,8 @@ public class UniEditActivity extends AppCompatActivity
 
         Init();
 
+        setMenu(this);
+
         mainEvenBinding();
     }
 
@@ -58,14 +85,21 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void Init()
     {
+        //注册EventBus
+//        EventBus.getDefault().register(this);
+
         MENUVIEW = findViewById(R.id.uniEditor_layout_left);
         CAVANS   = findViewById(R.id.uniEditor_layout_cavans);
         MAINContent = findViewById(R.id.uniEditor_layout_main);
         ROOT     = findViewById(R.id.uniEditor_layout_root);
 
+        bnt_play = findViewById(R.id.bnt_editor_play);
+        bnt_next = findViewById(R.id.bnt_editor_next);
+        bnt_prev = findViewById(R.id.bnt_editor_prev);
+
+        mMangeer = new UNIElementViewManager(this,CAVANS);
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
     }
-
 
 
     /**
@@ -77,8 +111,7 @@ public class UniEditActivity extends AppCompatActivity
             private Point startPoint;
             @Override
             public boolean onDrag(View v, DragEvent event) {
-                if (mMangeer.isNoSelectElement())
-                    return false;
+
                 switch (event.getAction())
                 {
                     case DragEvent.ACTION_DRAG_STARTED:
@@ -94,7 +127,13 @@ public class UniEditActivity extends AppCompatActivity
                         CAVANS.setBackgroundColor(Color.YELLOW);
                         return true;
                     case DragEvent.ACTION_DROP:
-                        //TODO batch or initial place
+                        if (mMangeer.isWaitToPlace()) {
+                            mMangeer.addToCavansFromMenu((int)event.getX(),(int)event.getY());
+                        }
+                        else {
+                            mMangeer.batchMove(event.getX()-startPoint.x,
+                                    event.getY()-startPoint.y);
+                        }
                         return true;
                     case DragEvent.ACTION_DRAG_ENDED:
                         CAVANS.setBackgroundColor(Color.WHITE);
@@ -106,7 +145,92 @@ public class UniEditActivity extends AppCompatActivity
             }
         });
         MAINContent.setOnTouchListener(this);
+//        MAINContent.setOnDragListener(new View.OnDragListener() {
+//            public boolean onDrag(View v, DragEvent event) {
+//                switch (event.getAction()) {
+//                    case DragEvent.ACTION_DRAG_STARTED:
+//                        return true;
+//                    case DragEvent.ACTION_DRAG_ENTERED:
+//                        return true;
+//                    case DragEvent.ACTION_DRAG_LOCATION:
+//                        return true;
+//                    case DragEvent.ACTION_DRAG_EXITED:
+//                        return true;
+//                    case DragEvent.ACTION_DROP:
+//                        Log.i(TAG,"顶层的激活了");
+//                        return false;
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//                        return true;
+//                    default:
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+        ROOT.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) { }
 
+            @Override
+            public void onDrawerOpened(View drawerView) { isDrawerOpen = true; }
+
+            @Override
+            public void onDrawerClosed(View drawerView) { isDrawerOpen = false; }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {  }
+        });
+
+        mAdapter.setOnItemClickLitener(new UNIMenuElementAdapter.OnItemClickLitener() {
+            @Override
+            public void onItemClick(View view, int position, float pos_x, float pos_y) {
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position, float pos_x, float pos_y) {
+                ClipData data =  ClipData.newPlainText("","");
+                view.startDrag(data,new View.DragShadowBuilder(view),null,0);
+
+                mMangeer.addToWaiting((UNIElementView)mAdapter.getItem(position));
+
+                ROOT.closeDrawer(Gravity.START);
+            }
+        });
+
+
+
+        bnt_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        bnt_prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setMenu(Context context)
+    {
+        UNIElementView ansU = new UNIElementView(context);
+        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_favorite));
+        u.add(ansU);
+        ansU = new UNIElementView(context);
+        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_favorite_border_grey_500_24dp));
+        u.add(ansU);
+        ansU = new UNIElementView(context);
+        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_border_color_grey_400_24dp));
+        u.add(ansU);
+
+        mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,u);
+
+        RecyclerView rv = MENUVIEW.findViewById(R.id.rv_editor_uni_item_menu);
+        rv.setLayoutManager(new GridLayoutManager(context,4));
+        rv.setAdapter(mAdapter);
     }
 
     /**
@@ -163,16 +287,16 @@ public class UniEditActivity extends AppCompatActivity
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scale2Translaform = detector.getScaleFactor();
-        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)*1.3f;
-        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)*1.3f;
+        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)*1.4f;
+        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)*1.4f;
         SCALE_FACTOR = scaleX;
 
         //设置放大缩小锚点
         CAVANS.setPivotX(detector.getFocusX());
         CAVANS.setPivotY(detector.getFocusY());
         if(!isDrawerOpen)
-            CAVANS.setScaleX(scaleX < 0.3f? 0.3f:scaleX);
-        CAVANS.setScaleY(scaleY < 0.3f? 0.3f:scaleY);
+            CAVANS.setScaleX(scaleX < 0.4f? 0.4f:scaleX);
+        CAVANS.setScaleY(scaleY < 0.4f? 0.4f:scaleY);
 
         return false;
     }
@@ -209,4 +333,20 @@ public class UniEditActivity extends AppCompatActivity
     public void onScaleEnd(ScaleGestureDetector detector) {
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(List<Property> Props, List<Bitmap> Imgs)
+    {
+        if (mMangeer!=null)
+        {
+            mMangeer.updateCanvas(Props,Imgs);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+//        EventBus.getDefault().unregister(this);
+    }
 }

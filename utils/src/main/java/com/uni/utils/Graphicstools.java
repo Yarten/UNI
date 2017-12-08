@@ -2,6 +2,9 @@ package com.uni.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
@@ -183,6 +186,28 @@ public class Graphicstools {
                 }
             }
             return result;
+        }
+    }
+
+
+    /**
+     * 用于处理图片转换等
+     */
+    public static class imgtool{
+        /**
+         * 将系统里面等 resource资源转换为bitmap
+         * @param context resource 资源所在等上下文
+         * @param resid   需要抓换等resource资源
+         * @return <tt>Bitmap</tt> 返回转换后的 bitmap
+         */
+        public static Bitmap res2bitmap(Context context,Integer resid) {
+            try {
+                Bitmap bmp= BitmapFactory.decodeResource(context.getResources(),resid);
+                return  bmp;
+            }
+            catch (Exception e) {
+                return null;
+            }
         }
     }
 

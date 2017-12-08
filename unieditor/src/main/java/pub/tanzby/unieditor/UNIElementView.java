@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.uni.utils.Graphicstools;
 import com.uni.utils.Property;
 
 /**
@@ -18,6 +19,7 @@ public class UNIElementView extends AppCompatImageView {
     Property mProperty;
     Boolean  hasAddedToCavans;
     Bitmap   mThumb;
+    int  ID;
 
 
     static int DEFAULT_WIDTH = 50;
@@ -25,18 +27,25 @@ public class UNIElementView extends AppCompatImageView {
 
     public UNIElementView(Context context) {
         super(context);
+        UNIElementViewInit();
     }
 
     public UNIElementView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        UNIElementViewInit();
     }
 
     public UNIElementView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        UNIElementViewInit();
     }
+
+    public Integer setID(){return ID;}
+    public void setID(Integer curID){ID = curID;}
 
     private void UNIElementViewInit()
     {
+        mProperty = new Property();
         /*
           默认值设定
          */
@@ -69,11 +78,35 @@ public class UNIElementView extends AppCompatImageView {
         }
     }
 
-    public void setPostionByDelta(Integer deltaX,Integer deltaY)
+    public void setPositionByDelta(Integer deltaX,Integer deltaY)
     {
         setX(getX()+deltaX);
         setY(getY()+deltaY);
+        setVisibility(VISIBLE);
+        updatePropoty();
     }
+    public void setPositionByCoor(int x, int y)
+    {
+        setX(x-getWidth()/2);
+        setY(y-getHeight()/2);
+        setVisibility(VISIBLE);
+        updatePropoty();
+    }
+
+    private void updatePropoty()
+    {
+        mProperty.x = (int)getX();
+        mProperty.y = (int)getY();
+        mProperty.opacity = getAlpha();
+    }
+
+    public void setThumb(Bitmap bmp)
+    {
+        mThumb = bmp;
+        setImageBitmap(mThumb);
+    }
+
+
 
 
     /**

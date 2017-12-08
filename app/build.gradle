@@ -26,6 +26,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
+
     implementation project (':utils')
     implementation project (':unieditor')
+
+    compile 'com.stone.vega.library:VegaLayoutManager:1.0.6'
+    compile 'com.android.support:cardview-v7:26.1.0'
 }
