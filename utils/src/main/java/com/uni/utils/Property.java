@@ -21,12 +21,26 @@ public class Property
     {
         Linear, FadeInOut, FadeIn, FadeOut, Bounce
     }
-
-
+    static final int TEMP_ID = -1;
+    public final int Id;
     public int x;
     public int y;
+    public int height;
+    public int width;
     public float opacity;
     public Mode mode;
+
+    public Property(int id) {
+        this(id, 0, 0, 0, 0,0, Mode.Linear);
+    }
+
+    public Property(int id, int x, int y, int height, int width, int opacity, Mode mode) {
+        Id = id;
+        this.x = x;
+        this.y = y;
+        this.opacity = opacity;
+        this.mode = mode;
+    }
 
     /**
      * 根据相关属性，为传入的画笔设置样式
@@ -42,7 +56,7 @@ public class Property
      */
     public Property clone()
     {
-        Property r = new Property();
+        Property r = new Property(this.Id);
         r.x = x;
         r.y = y;
         r.opacity = opacity;
@@ -68,7 +82,7 @@ public class Property
         Interpolator interpolator = pickInterpolator(next.mode);
         float alpha = interpolator.getInterpolation(t * 1.0f / duration);
 
-        Property mid = new Property();
+        Property mid = new Property(TEMP_ID);
         mid.x = (int)(last.x + (next.x-last.x) * alpha);
         mid.y = (int)(last.y + (next.y-last.y) * alpha);
         mid.opacity = last.opacity + (next.opacity-last.opacity) * alpha;
