@@ -50,7 +50,7 @@ public class CAN
         {
             public enum Type
             {
-                Update, Delete, Add
+                Update, Add, Delete
             }
 
             public Type what;
@@ -66,13 +66,14 @@ public class CAN
         {
             public enum Type
             {
-                Delete, Add
+                Update, Add, Delete
             }
 
             public Type what;
             public Integer where;
             public Integer which;
             public Property how;
+            public Bitmap image;
         }
     }
 
@@ -165,11 +166,23 @@ public class CAN
          * @param frameID 元素所在的帧的ID（请不要超过当前帧的数量，或者注意及时更新！）
          * @param elementID 元素本身的索引ID
          * @param prop 元素在该帧的属性
+         * @param image 元素的缩略图
          */
-        public static void addElement(Integer frameID, Integer elementID, Property prop)
+        public static void addElement(Integer frameID, Integer elementID, Property prop, Bitmap image)
         {
             Package.ElementRequire pkg = new Package.ElementRequire();
             pkg.what = Package.ElementRequire.Type.Add;
+            pkg.where = frameID;
+            pkg.which = elementID;
+            pkg.how = prop;
+            pkg.image = image;
+            EventBus.getDefault().post(pkg);
+        }
+
+        public static void updateElement(Integer frameID, Integer elementID, Property prop)
+        {
+            Package.ElementRequire pkg = new Package.ElementRequire();
+            pkg.what = Package.ElementRequire.Type.Update;
             pkg.where = frameID;
             pkg.which = elementID;
             pkg.how = prop;
