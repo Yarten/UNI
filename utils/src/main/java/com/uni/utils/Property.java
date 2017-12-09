@@ -9,8 +9,8 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
 /**
+ * 属性的集合，都是公开的成员<br>
  * Created by Yarten on 2017/11/18.
- * 属性的集合，都是公开的成员
  */
 public class Property
 {
@@ -51,8 +51,8 @@ public class Property
     }
 
     /**
-     * 根据前后两个属性，以及当前时间和总时间，返回插值。
-     * 注意到，当播放时间小于0时，直接返回前一个属性；
+     * 根据前后两个属性，以及当前时间和总时间，返回插值。<br>
+     * 注意到，当播放时间小于0时，直接返回前一个属性；<br>
      * 当播放时间大于总时间时，直接返回后一个属性。
      * @param last 上一个属性
      * @param next 下一个属性
