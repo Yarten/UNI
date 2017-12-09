@@ -39,7 +39,7 @@ class KeyFrame
         Property property;
     }
 
-    private SparseArray<Element> elements = new SparseArray<>();
+    SparseArray<Element> elements = new SparseArray<>();
 
     public void add(int ID, Property property, Bitmap bitmap)
     {

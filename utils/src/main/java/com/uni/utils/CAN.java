@@ -1,6 +1,7 @@
 package com.uni.utils;
 
 import android.graphics.Bitmap;
+import android.util.SparseArray;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -35,8 +36,8 @@ public class CAN
          */
         public static class EditorUpdate
         {
-            public Map<Integer, Property> props;
-            public Map<Integer, Bitmap> images;
+            public SparseArray<Property> props;
+            public SparseArray<Bitmap> images;
         }
 
         /**
@@ -91,7 +92,7 @@ public class CAN
          * @param props 帧中各个元素的属性
          * @param images 帧中各个元素的截图
          */
-        public static void updateEditor(Map<Integer, Property> props, Map<Integer, Bitmap> images)
+        public static void updateEditor(SparseArray<Property> props, SparseArray<Bitmap> images)
         {
             Package.EditorUpdate pkg = new Package.EditorUpdate();
             pkg.props = props;
@@ -129,7 +130,7 @@ public class CAN
 
         /**
          * UNIEditor要求UNICache删除指定帧。<br>
-         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(Map, Map)}，<br>
+         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(SparseArray, SparseArray)}，<br>
          * 或者UNIEditor调用{@link DataBus#requireUpdate(Integer)}。<br>
          *
          * 用到的包：{@link Package.FrameRequire}
