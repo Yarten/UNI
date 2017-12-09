@@ -38,6 +38,7 @@ public class CAN
         {
             public SparseArray<Property> props;
             public SparseArray<Bitmap> images;
+            public boolean hasNext;
         }
 
         /**
@@ -165,27 +166,27 @@ public class CAN
          *
          * 用到的包：{@link Package.ElementRequire}
          * @param frameID 元素所在的帧的ID（请不要超过当前帧的数量，或者注意及时更新！）
-         * @param elementID 元素本身的索引ID
          * @param prop 元素在该帧的属性
          * @param image 元素的缩略图
          */
-        public static void addElement(Integer frameID, Integer elementID, Property prop, Bitmap image)
+        public static void addElement(Integer frameID, Property prop, Bitmap image)
         {
             Package.ElementRequire pkg = new Package.ElementRequire();
             pkg.what = Package.ElementRequire.Type.Add;
             pkg.where = frameID;
-            pkg.which = elementID;
+            pkg.which = prop.ID;
             pkg.how = prop;
             pkg.image = image;
             EventBus.getDefault().post(pkg);
         }
 
-        public static void updateElement(Integer frameID, Integer elementID, Property prop)
+
+        public static void updateElement(Integer frameID, Property prop)
         {
             Package.ElementRequire pkg = new Package.ElementRequire();
             pkg.what = Package.ElementRequire.Type.Update;
             pkg.where = frameID;
-            pkg.which = elementID;
+            pkg.which = prop.ID;
             pkg.how = prop;
             EventBus.getDefault().post(pkg);
         }
@@ -197,5 +198,15 @@ public class CAN
     public static class UISwitcher
     {
 
+    }
+
+    public static void login(Object obj)
+    {
+        EventBus.getDefault().register(obj);
+    }
+
+    public static void logout(Object obj)
+    {
+        EventBus.getDefault().unregister(obj);
     }
 }
