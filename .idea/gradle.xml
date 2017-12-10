@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/unicache" />
             <option value="$PROJECT_DIR$/unieditor" />
             <option value="$PROJECT_DIR$/uniplayer" />
             <option value="$PROJECT_DIR$/utils" />

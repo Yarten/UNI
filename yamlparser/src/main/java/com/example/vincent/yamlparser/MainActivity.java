@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 while (parser.hasNextElement() != -1){
 
                     Property property = parser.getElement();
-                    Log.i(TAG, "onCreate: "+property.Id + " " + property.x + " " + property.y);
+                    Log.i(TAG, "onCreate: "+property.ID + " " + property.x + " " + property.y);
 
                 }
             }

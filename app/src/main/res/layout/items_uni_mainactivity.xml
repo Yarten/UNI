@@ -13,11 +13,16 @@
         app:cardCornerRadius="8dp"
         app:cardElevation="12dp">
 
+        <com.uni.uniplayer.UNIView
+            android:id="@+id/UNIView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <TextView
             android:id="@+id/tv_uni_mianactivity_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="bottom|left|center"
             android:layout_margin="10dp"
             android:fontFamily="monospace"
             android:gravity="center"

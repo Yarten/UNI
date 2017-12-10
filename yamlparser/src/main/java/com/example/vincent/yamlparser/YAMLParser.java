@@ -77,7 +77,7 @@ public class YAMLParser {
      * @param property
      */
     public void addElement(Property property){
-        if(property.Id > mMaxElementId) mMaxElementId =  property.Id;
+        if(property.ID > mMaxElementId) mMaxElementId =  property.ID;
         curElementList.add(property);
     }
 
@@ -157,7 +157,7 @@ public class YAMLParser {
 
                 for(Property element: elementLists){
                     Map<String, Object> elementMap = new HashMap<>();
-                    elementMap.put("Id", element.Id);
+                    elementMap.put("Id", element.ID);
                     elementMap.put("x", element.x);
                     elementMap.put("y",element.y);
                     elementMap.put("height",element.height);
