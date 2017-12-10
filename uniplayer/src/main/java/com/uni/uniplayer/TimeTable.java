@@ -21,17 +21,17 @@ public class TimeTable
     private class Frame
     {
         // 从上一帧变换到当前帧的时间
-        long duration = 0;
+        long interval = 0;
         // 该帧维持本帧状态的时间
-        long delay = 0;
+        long duration = 0;
         // 该帧存在的所有元素集合
         ArrayList<Integer> elements = new ArrayList<>();
 
         public Frame clone()
         {
             Frame r = new Frame();
+            r.interval = interval;
             r.duration = duration;
-            r.delay = delay;
             r.elements.ensureCapacity(elements.size());
             for(int i = 0, size = elements.size(); i < size; i++)
                 r.elements.add(elements.get(i));
@@ -146,12 +146,12 @@ public class TimeTable
      * addFrame: 添加帧，调用它时，帧游标自动下移，
      * 后续调用addElement时，元素添加到新的帧中。
      */
-    public void addFrame(long duration, long delay)
+    public void addFrame(long interval, long duration)
     {
         frames.add(new Frame());
         currentFrame = frames.get(frameIndex++);
+        currentFrame.interval = interval;
         currentFrame.duration = duration;
-        currentFrame.delay = delay;
     }
 
     /**
@@ -214,7 +214,7 @@ public class TimeTable
 
         playtime = 0;
         deltatime = 0;
-        segtime = lastFrame.delay + currentFrame.duration;
+        segtime = lastFrame.duration + currentFrame.interval;
         return true;
     }
 
@@ -243,7 +243,7 @@ public class TimeTable
             if(hasNextFrame())
             {
                 nextFrame();
-                segtime = lastFrame.delay + currentFrame.duration;
+                segtime = lastFrame.duration + currentFrame.interval;
                 continue;
             }
             else
@@ -275,7 +275,7 @@ public class TimeTable
         int cursor = element.cursor;
         Property next = element.states.get(cursor);
         Property last = element.states.get(cursor == 0 ? 0 : cursor-1);
-        return Property.interpolation(last, next, deltatime-lastFrame.delay, segtime);
+        return Property.interpolation(last, next, deltatime-lastFrame.duration, segtime);
     }
     //endregion
 }

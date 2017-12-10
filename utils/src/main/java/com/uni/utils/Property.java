@@ -69,6 +69,7 @@ public class Property
     public int height;
     public float opacity;
     public Mode mode;
+    public String url;
     //endregion
 
     //region 工具函数

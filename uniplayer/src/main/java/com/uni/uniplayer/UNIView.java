@@ -161,7 +161,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        isRunning = false;
+        stop();
     }
 
     private void draw(long deltaT)
@@ -171,7 +171,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
 
         uniFrame.render(canvas, deltaT);
 
-        if(canvas != null) sfh.unlockCanvasAndPost(canvas);
+        sfh.unlockCanvasAndPost(canvas);
     }
     //endregion
 }

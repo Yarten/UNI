@@ -19,6 +19,8 @@ public class UNIFrame
 
     private TimeTable timeTable = new TimeTable();
 
+    private Brief brief;
+
     public boolean play()
     {
         for(UNIElement UNIElement : elements)
@@ -56,9 +58,14 @@ public class UNIFrame
         timeTable.clear();
     }
 
-    public void addFrame(long duration, long delay)
+    public void setBrief(Brief brief)
     {
-        timeTable.addFrame(duration, delay);
+        this.brief = brief;
+    }
+
+    public void addFrame(long interval, long duration)
+    {
+        timeTable.addFrame(interval, duration);
     }
 
     public void addElement(int id, UNIElement UNIElement, Property state)
@@ -76,5 +83,10 @@ public class UNIFrame
     public void setLoop(boolean isLoop)
     {
         timeTable.isLoop = isLoop;
+    }
+
+    public String toString()
+    {
+        return brief.title;
     }
 }

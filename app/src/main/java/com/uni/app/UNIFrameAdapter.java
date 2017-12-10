@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.uni.uniplayer.UNIView;
+
 import java.util.List;
 
 /**
@@ -43,18 +46,20 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         holder.title.setText(mList.get(position).toString());
+
+
         if (mOnItemClickLitener != null) {
             final  int pos = holder.getLayoutPosition();
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickLitener.onFrameClick(holder.title, pos);
+                    mOnItemClickLitener.onFrameClick(holder.uniView, pos);
                 }});
 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickLitener.onFrameLongClick(holder.title,pos);
+                    mOnItemClickLitener.onFrameLongClick(holder.title, pos);
                     return true;
                 }});
             holder.bnt_edit.setOnClickListener(new View.OnClickListener() {
@@ -98,12 +103,15 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
         TextView title;
         ImageButton bnt_favor;
         ImageButton bnt_edit;
+        UNIView uniView;
+
 
         public VH(View itemView) {
             super(itemView);
             title= (TextView) itemView.findViewById(R.id.tv_uni_mianactivity_title);
             bnt_favor = (ImageButton) itemView.findViewById(R.id.imbnt_uni_mianactivity_favor);
             bnt_edit  = (ImageButton) itemView.findViewById(R.id.imbnt_uni_mianactivity_edit);
+            uniView = itemView.findViewById(R.id.UNIView);
         }
     }
 

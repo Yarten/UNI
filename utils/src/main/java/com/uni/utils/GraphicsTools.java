@@ -7,11 +7,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v7.app.WindowDecorActionBar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -50,6 +54,58 @@ public class GraphicsTools {
         return (int) (dpValue * scale + 0.5f);
     }
 
+    /**
+     * 保存图片，由manager调用
+     * @param dir 保存的位置（如：cache目录，user目录等）
+     * @param name 图片的名字（没有后缀）
+     * @param image 图片
+     * @return 保存成功与否
+     */
+    public static boolean saveToLocal(File dir, String name, Bitmap image)
+    {
+        File file = new File(dir, name + ".png");
+        if(file.exists()) file.delete();
+        else try
+        {
+            file.createNewFile();
+            FileOutputStream stream = new FileOutputStream(file);
+            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.flush();
+            stream.close();
+            return true;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * 从本地加载图片，由Manager调用
+     * @param dir 读取的位置（如：cache目录，user目录）
+     * @param name 图片的名字（没有后缀）
+     * @return 读取到的图片
+     */
+    public static Bitmap loadFromLocal(File dir, String name)
+    {
+        Bitmap image = null;
+
+        try
+        {
+            File file = new File(dir, name + ".png");
+            if(file.exists())
+                image = BitmapFactory.decodeFile(file.getAbsolutePath());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            image = null;
+        }
+
+        return image;
+    }
 
     /**
      * 用于处理沉浸式状态栏的一个类

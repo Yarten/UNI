@@ -129,7 +129,7 @@ public class YAMLParser {
         }
    }
 
-   public void saveYAML() throws IOException{
+   public boolean saveYAML(){
         try{
             mFile = new File(mFilePath, mFileName);
             FileWriter fileWriter = new FileWriter(mFile, false);
@@ -177,14 +177,19 @@ public class YAMLParser {
             Yaml yaml = new Yaml();
 
             yaml.dump(UNIFrame, fileWriter);
+
             fileWriter.close();
+
+            return true;
 
         }catch (Exception e){
             e.printStackTrace();
+
+            return false;
         }
    }
 
-   public void loadYAML() throws IOException{
+   public boolean loadYAML(){
        try{
            mFile = new File(mFilePath, mFileName);
            FileReader fileReader = new FileReader(mFile);
@@ -238,8 +243,13 @@ public class YAMLParser {
            mFrameIndex = -1;
            mCurElementIndex = -1;
 
+           return true;
+
        }catch (Exception e){
+
            e.printStackTrace();
+
+           return  false;
        }
    }
 

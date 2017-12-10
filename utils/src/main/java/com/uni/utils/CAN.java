@@ -48,7 +48,7 @@ public class CAN
          * 2. 删除某一帧<br>
          * 3. 删除某一元素
          */
-        public static class FrameRequire
+        public static class FrameRequest
         {
             public enum Type
             {
@@ -64,7 +64,7 @@ public class CAN
          * 该元素的ID和属性一并通知。<br>
          * 注意：Element不局限于UNIElement，也可以是UNIElement的Atom.
          */
-        public static class ElementRequire
+        public static class ElementRequest
         {
             public enum Type
             {
@@ -93,68 +93,69 @@ public class CAN
          * @param props 帧中各个元素的属性
          * @param images 帧中各个元素的截图
          */
-        public static void updateEditor(SparseArray<Property> props, SparseArray<Bitmap> images)
+        public static void updateEditor(SparseArray<Property> props, SparseArray<Bitmap> images, boolean hasNext)
         {
             Package.EditorUpdate pkg = new Package.EditorUpdate();
             pkg.props = props;
             pkg.images = images;
+            pkg.hasNext = hasNext;
             EventBus.getDefault().post(pkg);
         }
 
         /**
          * UNIEditor要求UNICache返回指定帧的全部数据<br>
          *
-         * 用到的包：{@link Package.FrameRequire}
+         * 用到的包：{@link Package.FrameRequest}
          * @param frameID
          */
         public static void requireUpdate(Integer frameID)
         {
-            Package.FrameRequire pkg = new Package.FrameRequire();
-            pkg.what = Package.FrameRequire.Type.Update;
+            Package.FrameRequest pkg = new Package.FrameRequest();
+            pkg.what = Package.FrameRequest.Type.Update;
             pkg.which = frameID;
             EventBus.getDefault().post(pkg);
         }
 
         /**
-         * 为当前帧序列中添加或插入帧
+         * 为当前帧序列中添加或插入帧<br>
          *
-         * 用到的包：{@link Package.FrameRequire}
+         * 用到的包：{@link Package.FrameRequest}<br>
          * @param where 插入的位置，位置从0开始（该位置的帧将会往后挪，如：1,2,3, 在第1位插入4：1,4,2,3）
          */
         public static void addFrame(Integer where)
         {
-            Package.FrameRequire pkg = new Package.FrameRequire();
-            pkg.what = Package.FrameRequire.Type.Add;
+            Package.FrameRequest pkg = new Package.FrameRequest();
+            pkg.what = Package.FrameRequest.Type.Add;
             pkg.which = where;
             EventBus.getDefault().post(pkg);
         }
 
         /**
          * UNIEditor要求UNICache删除指定帧。<br>
-         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(SparseArray, SparseArray)}，<br>
+         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(SparseArray, SparseArray, boolean)}，<br>
          * 或者UNIEditor调用{@link DataBus#requireUpdate(Integer)}。<br>
          *
-         * 用到的包：{@link Package.FrameRequire}
+         * 用到的包：{@link Package.FrameRequest}
          * @param frameID
          */
         public static void deleteFrame(Integer frameID)
         {
-            Package.FrameRequire pkg = new Package.FrameRequire();
-            pkg.what = Package.FrameRequire.Type.Delete;
+            Package.FrameRequest pkg = new Package.FrameRequest();
+            pkg.what = Package.FrameRequest.Type.Delete;
             pkg.which = frameID;
             EventBus.getDefault().post(pkg);
         }
 
         /**
-         * UNIEditor要求UNICache删除指定元素
+         * UNIEditor要求UNICache删除指定元素<br>
          *
-         * 用到的包：{@link Package.ElementRequire}
+         * 用到的包：{@link Package.ElementRequest}
          * @param frameID
          */
         public static void deleteElement(Integer frameID, Integer elementID)
         {
-            Package.ElementRequire pkg = new Package.ElementRequire();
-            pkg.what = Package.ElementRequire.Type.Delete;
+            Package.ElementRequest pkg = new Package.ElementRequest();
+            pkg.what = Package.ElementRequest.Type.Delete;
             pkg.where = frameID;
             pkg.which = elementID;
             EventBus.getDefault().post(pkg);
@@ -162,17 +163,17 @@ public class CAN
 
 
         /**
-         * UNIEditor通知UNICache添加元素
+         * UNIEditor通知UNICache添加元素<br>
          *
-         * 用到的包：{@link Package.ElementRequire}
+         * 用到的包：{@link Package.ElementRequest}
          * @param frameID 元素所在的帧的ID（请不要超过当前帧的数量，或者注意及时更新！）
          * @param prop 元素在该帧的属性
          * @param image 元素的缩略图
          */
         public static void addElement(Integer frameID, Property prop, Bitmap image)
         {
-            Package.ElementRequire pkg = new Package.ElementRequire();
-            pkg.what = Package.ElementRequire.Type.Add;
+            Package.ElementRequest pkg = new Package.ElementRequest();
+            pkg.what = Package.ElementRequest.Type.Add;
             pkg.where = frameID;
             pkg.which = prop.ID;
             pkg.how = prop;
@@ -183,13 +184,18 @@ public class CAN
 
         public static void updateElement(Integer frameID, Property prop)
         {
-            Package.ElementRequire pkg = new Package.ElementRequire();
-            pkg.what = Package.ElementRequire.Type.Update;
+            Package.ElementRequest pkg = new Package.ElementRequest();
+            pkg.what = Package.ElementRequest.Type.Update;
             pkg.where = frameID;
             pkg.which = prop.ID;
             pkg.how = prop;
             EventBus.getDefault().post(pkg);
         }
+    }
+
+    public static class Control
+    {
+
     }
 
     /**
@@ -200,13 +206,13 @@ public class CAN
 
     }
 
-    public static void login(Object obj)
+    public static void login(Object who)
     {
-        EventBus.getDefault().register(obj);
+        EventBus.getDefault().register(who);
     }
 
-    public static void logout(Object obj)
+    public static void logout(Object who)
     {
-        EventBus.getDefault().unregister(obj);
+        EventBus.getDefault().unregister(who);
     }
 }

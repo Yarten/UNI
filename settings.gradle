@@ -1,1 +1,1 @@
-include ':app', ':utils', ':uniplayer', ':unieditor', ':unicache', ':yamlparser'
+include ':app', ':utils', ':uniplayer', ':unieditor', ':unicache', ':unimanager', ':yamlparser'

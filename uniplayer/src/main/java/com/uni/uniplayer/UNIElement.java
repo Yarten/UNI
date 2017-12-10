@@ -65,9 +65,9 @@ public class UNIElement
         timeTable.clear();
     }
 
-    public void addFrame(long duration, long delay)
+    public void addFrame(long interval, long duration)
     {
-        timeTable.addFrame(duration, delay);
+        timeTable.addFrame(interval, duration);
     }
 
     public void addElement(int id, Bitmap image, Property state)

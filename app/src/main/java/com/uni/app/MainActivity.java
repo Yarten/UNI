@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.stone.vega.library.VegaLayoutManager;
+import com.uni.uniplayer.UNIFrame;
+import com.uni.uniplayer.UNIView;
 import com.uni.utils.GraphicsTools.statusBar;
 
 import java.util.ArrayList;
@@ -33,15 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
         statusBar.immerseStatusBar(this);
 
-        List<String> l = new ArrayList<>();
-        l.add("uni frame 1");
-        l.add("uni frame 2");
-        l.add("uni frame 3");
-        l.add("uni frame 4");
-        l.add("uni frame 5");
-        l.add("uni frame 6");
+        List<UNIFrame> ls = new ArrayList<>();
 
-        mAdapter = new UNIFrameAdapter<String>(getApplicationContext(),l);
+
+
+        mAdapter = new UNIFrameAdapter<>(getApplicationContext(),ls);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
 
@@ -58,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFrameClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"click",Toast.LENGTH_SHORT).show();
+
+                UNIView uniView = (UNIView)view;
+                toggle = !toggle;
+                if(toggle)
+                {
+                    uniView.play();
+                }
+                else uniView.stop();
             }
 
             @Override

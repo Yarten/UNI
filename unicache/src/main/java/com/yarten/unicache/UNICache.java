@@ -19,6 +19,21 @@ public class UNICache
 {
     private List<KeyFrame> frames = new ArrayList<>();
 
+    public UNICache()
+    {
+        CAN.login(this);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        CAN.logout(this);
+    }
+
+    public void clear()
+    {
+        frames.clear();
+    }
+
     public void addFrame(int ID)
     {
         KeyFrame keyFrame;
@@ -37,6 +52,8 @@ public class UNICache
 
     public void updateFrame(int ID)
     {
+        if(frames.size() == 0) addFrame(ID);
+
         KeyFrame keyFrame = frames.get(ID);
 
         int size = keyFrame.elements.size();
@@ -51,7 +68,7 @@ public class UNICache
             images.put(id, element.image);
         }
 
-        CAN.DataBus.updateEditor(props, images);
+        CAN.DataBus.updateEditor(props, images, ID != frames.size()-1);
     }
 
     public void addElement(int where, int ID, Property property, Bitmap image)
@@ -78,7 +95,7 @@ public class UNICache
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void UpdateElement(CAN.Package.ElementRequire pkg)
+    public void UpdateElement(CAN.Package.ElementRequest pkg)
     {
         switch (pkg.what)
         {
@@ -95,7 +112,7 @@ public class UNICache
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void UpdateFrame(CAN.Package.FrameRequire pkg)
+    public void UpdateFrame(CAN.Package.FrameRequest pkg)
     {
         switch (pkg.what)
         {
