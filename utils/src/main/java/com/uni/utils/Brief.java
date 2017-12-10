@@ -12,7 +12,7 @@ public class Brief
 {
     public String author;
     public String description;
-    public Date date;
+    public String date;
     public Bitmap thumb;
     public String url;
     public String title;

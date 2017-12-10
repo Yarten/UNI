@@ -26,17 +26,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         YAMLParser parser = new YAMLParser(getFilesDir(), "test.yml");
-
+        parser.setBrief("vincent", "student", "12-11", "parser-url", "Test");
         Property p1 = new Property(1);
         Property p2 = new Property(2);
         
         parser.addFrame(0.1, 0.2);
-        parser.addElement(p1);
-        parser.addElement(p2);
+        parser.addElement(p1, "p1_url");
+        parser.addElement(p2, "p2_url");
         
         parser.addFrame(0.3, 0.4);
-        parser.addElement(new Property(3));
-        parser.addElement(new Property(4));
+        parser.addElement(new Property(3), "p3_url");
+        parser.addElement(new Property(4), "p4_url");
 
         //parser.addFrame(0.5f, 0.4f);
         try{
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             parser.loadYAML();
             Log.i(TAG, "onCreate: loaded");
 
-            Log.i(TAG, "onCreate: "+parser.getMaxElementId());
+            Log.i(TAG, "onCreate: "+parser.getMaxElementId() + parser.getFrameUrl() + parser.getTitle());
 
             List<FrameProperty> frameProperties = new ArrayList<>();
 
@@ -57,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
                 while (parser.hasNextElement() != -1){
 
                     Property property = parser.getElement();
-                    Log.i(TAG, "onCreate: "+property.ID + " " + property.x + " " + property.y);
+                    String url = parser.getElementUrl();
+                    Log.i(TAG, "onCreate: "+property.ID + " " + property.x + " " + property.y + " " + url
+                    );
 
                 }
             }

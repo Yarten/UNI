@@ -3,10 +3,12 @@ package com.example.vincent.yamlparser;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.uni.utils.Brief;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.Property;
 import org.yaml.snakeyaml.*;
@@ -34,10 +36,15 @@ import static android.content.ContentValues.TAG;
 public class YAMLParser {
 
     private static final String TAG = "YAMLParser";
-    private String mUNIVersion = "";
-    private String mAuthor = "";
-    private String mCreateTime = "";
-    private String mUpdateTime = "";
+
+    private class MProperty{
+        public MProperty(Property property, String url){
+            this.property = property;
+            this.url = url;
+        }
+        public Property property;
+        public String url;
+    }
 
     private File mFilePath;
     private String mFileName;
@@ -46,11 +53,13 @@ public class YAMLParser {
     private ArrayList<FrameProperty> mFrames = new ArrayList<>();
     private int mFrameIndex;
 
-    private List<ArrayList<Property>> mElements = new ArrayList<ArrayList<Property>>();
-    private ArrayList<Property> curElementList;
+    private List<ArrayList<MProperty>> mElements = new ArrayList<ArrayList<MProperty>>();
+    private ArrayList<MProperty> curElementList;
     private int mCurElementIndex;
 
     private int mMaxElementId;
+
+    private Brief brief = new Brief();
 
     /**
      * 初始化函数
@@ -66,7 +75,7 @@ public class YAMLParser {
 
         mFrames.add(new FrameProperty(mFrames.size()+1, duration, interval));
 
-        ArrayList<Property> elementList = new ArrayList<Property>();
+        ArrayList<MProperty> elementList = new ArrayList<>();
         mElements.add(elementList);
         curElementList = elementList;
     }
@@ -76,9 +85,9 @@ public class YAMLParser {
      * 默认在当前帧增加Element
      * @param property
      */
-    public void addElement(Property property){
+    public void addElement(Property property, String url){
         if(property.ID > mMaxElementId) mMaxElementId =  property.ID;
-        curElementList.add(property);
+        curElementList.add(new MProperty(property, url));
     }
 
     /**
@@ -94,7 +103,7 @@ public class YAMLParser {
      * @return
      */
     public Property getElement(){
-        return curElementList.get(mCurElementIndex);
+        return (curElementList.get(mCurElementIndex)).property;
     }
 
     /**
@@ -136,6 +145,12 @@ public class YAMLParser {
 
             Map<String, Object>UNIFrame = new HashMap<>();
 
+            UNIFrame.put("author", this.brief.author);
+            UNIFrame.put("description", this.brief.description);
+            UNIFrame.put("data", this.brief.date);
+            UNIFrame.put("url", this.brief.url);
+            UNIFrame.put("title", this.brief.title);
+
             Map<String, Object>Frames = new HashMap<>();
             for(FrameProperty frame:mFrames){
                 Map<String, Object> frameProperty = new HashMap<>();
@@ -150,20 +165,21 @@ public class YAMLParser {
             Map<String, Object>ElementsSet = new HashMap<>();
 
             int j = 0;
-            for(List<Property> elementLists: mElements){
+            for(List<MProperty> elementLists: mElements){
                 Map<String, Object> list= new HashMap<>();
 
                 int i = 0;
 
-                for(Property element: elementLists){
+                for(MProperty element: elementLists){
                     Map<String, Object> elementMap = new HashMap<>();
-                    elementMap.put("Id", element.ID);
-                    elementMap.put("x", element.x);
-                    elementMap.put("y",element.y);
-                    elementMap.put("height",element.height);
-                    elementMap.put("width", element.width);
-                    elementMap.put("opacity", (Float)element.opacity);
-                    elementMap.put("mode",element.mode);
+                    elementMap.put("Id", element.property.ID);
+                    elementMap.put("x", element.property.x);
+                    elementMap.put("y",element.property.y);
+                    elementMap.put("height",element.property.height);
+                    elementMap.put("width", element.property.width);
+                    elementMap.put("opacity", (Float)element.property.opacity);
+                    elementMap.put("mode",element.property.mode);
+                    elementMap.put("url", element.url);
 
                     list.put(String.valueOf(i++), elementMap);
                 }
@@ -209,6 +225,13 @@ public class YAMLParser {
            mElements.clear();
            mMaxElementId = -1;
 
+           String author = (String) UNIFrame.get("author");
+           String description = (String) UNIFrame.get("description");
+           String date = (String) UNIFrame.get("date");
+           String url = (String) UNIFrame.get("url");
+           String title = (String) UNIFrame.get("title");
+
+           this.setBrief(author, description, date, url, title);
 
            Map<String, Object> Frames = (Map<String, Object>)UNIFrame.get("Frames");
            for(String key: Frames.keySet()){
@@ -222,7 +245,7 @@ public class YAMLParser {
            Map<String, Object> ElementSet = (Map<String, Object>)UNIFrame.get("Elements");
            for(String key: ElementSet.keySet()){
                Map<String, Object> elementListMap = (Map<String, Object>) ElementSet.get(key);
-               ArrayList<Property> elementList = new ArrayList<Property>();
+               ArrayList<MProperty> elementList = new ArrayList<MProperty>();
 
                for(String subKey:elementListMap.keySet()){
                    Map<String, Object> elementMap = (Map<String, Object>) elementListMap.get(subKey);
@@ -233,7 +256,9 @@ public class YAMLParser {
                    int width = (Integer) elementMap.get("width");
                    Double opacity = (Double) ( elementMap.get("opacity"));
                    Property.Mode mode = (Property.Mode) elementMap.get("mode");
-                   elementList.add(new Property(Id, x, y, height, width, opacity.floatValue(), mode));
+                   url = (String) elementMap.get("url");
+                   Property p = new Property(Id, x, y, height, width, opacity.floatValue(), mode);
+                   elementList.add(new MProperty(p, url));
                    if (Id > mMaxElementId) mMaxElementId = Id;
                }
 
@@ -253,39 +278,29 @@ public class YAMLParser {
        }
    }
 
-    public String getUNIVersion() {
-        return mUNIVersion;
-    }
-
-    public void setUNIVersion(String mUNIVersion) {
-        this.mUNIVersion = mUNIVersion;
-    }
-
-    public String getAuthor() {
-        return mAuthor;
-    }
-
-    public void setAuthor(String mAuthor) {
-        this.mAuthor = mAuthor;
-    }
-
-    public String getCreateTime() {
-        return mCreateTime;
-    }
-
-    public void setCreateTime(String mCreateTime) {
-        this.mCreateTime = mCreateTime;
-    }
-
-    public String getUpdateTime() {
-        return mUpdateTime;
-    }
-
-    public void setUpdateTime(String mUpdateTime) {
-        this.mUpdateTime = mUpdateTime;
-    }
-
     public int getMaxElementId() {
         return mMaxElementId;
     }
+
+    public void setBrief(String author, String description, String date, String url, String title){
+       this.brief.author = author;
+       this.brief.description = description;
+       this.brief.date = date;
+       this.brief.url = url;
+       this.brief.title = title;
+    }
+
+    public String getFrameUrl(){
+        return this.brief.url;
+    }
+
+    public String getTitle(){
+        return this.brief.title;
+    }
+
+    public String getElementUrl(){
+        return (curElementList.get(mCurElementIndex)).url;
+    }
+
+
 }
