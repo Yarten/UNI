@@ -7,7 +7,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/item_uni_mianactivity_card"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_margin="16dp"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="8dp"
@@ -23,12 +23,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|left|center"
-            android:layout_margin="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="24dp"
             android:fontFamily="monospace"
             android:gravity="center"
             android:text="UNI Frame"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="#333" />
+            android:textColor="#333"
+            android:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/imbnt_uni_mianactivity_favor"

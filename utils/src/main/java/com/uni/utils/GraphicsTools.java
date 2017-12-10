@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  *
  */
 
-public class Graphicstools {
+public class GraphicsTools {
 
     /**
      * 根据给定的px值获取当前设备上对应的dip值

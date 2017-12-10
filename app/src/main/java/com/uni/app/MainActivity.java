@@ -1,25 +1,18 @@
 package com.uni.app;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.stone.vega.library.VegaLayoutManager;
-import com.uni.utils.Graphicstools.statusBar;
+import com.uni.utils.GraphicsTools.statusBar;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import pub.tanzby.unieditor.UNIElementView;
 import pub.tanzby.unieditor.UniEditActivity;
 
 public class MainActivity extends AppCompatActivity {

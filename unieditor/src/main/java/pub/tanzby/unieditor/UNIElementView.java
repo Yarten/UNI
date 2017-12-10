@@ -5,9 +5,8 @@ import android.graphics.Bitmap;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.ViewGroup;
 
-import com.uni.utils.Graphicstools;
+import com.uni.utils.GraphicsTools;
 import com.uni.utils.Property;
 
 /**
@@ -19,8 +18,6 @@ public class UNIElementView extends AppCompatImageView {
     Property mProperty;
     Boolean  hasAddedToCavans;
     Bitmap   mThumb;
-    int  ID;
-
 
     static int DEFAULT_WIDTH = 50;
     static String TAG = "UNIElementView";
@@ -40,28 +37,17 @@ public class UNIElementView extends AppCompatImageView {
         UNIElementViewInit();
     }
 
-    public Integer setID(){return ID;}
-    public void setID(Integer curID){ID = curID;}
-
     private void UNIElementViewInit()
     {
         mProperty = new Property();
-        /*
-          默认值设定
-         */
-        mProperty.x = 0;
-        mProperty.y = 0;
-        mProperty.mode = Property.Mode.Linear;
+
         hasAddedToCavans = false;
 
-        /*
-          默认行为设定
-         */
         setVisibility(INVISIBLE);
 
     }
 
-    public void setPropertyAndBM(Property prop,Bitmap thumb)
+    public void setPropertyAndBitmap(Property prop,Bitmap thumb)
     {
         if (this.getParent() == null){
             Log.i(TAG+" reflashProperty"," 未添加到画板");
@@ -78,21 +64,6 @@ public class UNIElementView extends AppCompatImageView {
         }
     }
 
-    public void setPositionByDelta(Integer deltaX,Integer deltaY)
-    {
-        setX(getX()+deltaX);
-        setY(getY()+deltaY);
-        setVisibility(VISIBLE);
-        updatePropoty();
-    }
-    public void setPositionByCoor(int x, int y)
-    {
-        setX(x-getWidth()/2);
-        setY(y-getHeight()/2);
-        setVisibility(VISIBLE);
-        updatePropoty();
-    }
-
     private void updatePropoty()
     {
         mProperty.x = (int)getX();
@@ -100,13 +71,21 @@ public class UNIElementView extends AppCompatImageView {
         mProperty.opacity = getAlpha();
     }
 
-    public void setThumb(Bitmap bmp)
+    public void setPositionTo(int x, int y)
     {
-        mThumb = bmp;
-        setImageBitmap(mThumb);
+        setX(x - getWidth());
+        setY(y - getHeight());
+        setVisibility(VISIBLE);
+        updatePropoty();
     }
 
-
+    public void moveBy(int x, int y)
+    {
+        setX(getX()+x);
+        setY(getY()+y);
+        setVisibility(VISIBLE);
+        updatePropoty();
+    }
 
 
     /**
@@ -114,11 +93,37 @@ public class UNIElementView extends AppCompatImageView {
      */
 
     @Override
+    public void scrollTo(int x, int y) {
+        super.scrollTo(x, y);
+        setVisibility(VISIBLE);
+        updatePropoty();
+
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+        mThumb = bm;
+    }
+
+    @Override
+    public void setAlpha(float alpha) {
+        super.setAlpha(alpha);
+        mProperty.opacity=alpha;
+    }
+
+    @Override
+    public void setRotation(float rotation) {
+        super.setRotation(rotation);
+        // TODO
+    }
+
+    @Override
     protected void onAttachedToWindow() {
 
-        ViewGroup.LayoutParams ll = this.getLayoutParams();
-        ll.height=ll.width =  DEFAULT_WIDTH;
-        setLayoutParams(ll);
+        int mini = (int) GraphicsTools.dip2px(getContext(),(int)DEFAULT_WIDTH);
+        setMinimumHeight(mini);
+        setMinimumWidth(mini);
         super.onAttachedToWindow();
     }
 }

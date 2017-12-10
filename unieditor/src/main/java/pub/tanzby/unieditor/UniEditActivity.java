@@ -3,11 +3,12 @@ package pub.tanzby.unieditor;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,17 +21,17 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.uni.utils.Graphicstools;
-import com.uni.utils.Property;
+import com.uni.utils.CAN;
+import com.uni.utils.GraphicsTools;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.feeeei.circleseekbar.CircleSeekBar;
 
 
 public class UniEditActivity extends AppCompatActivity
@@ -42,7 +43,8 @@ public class UniEditActivity extends AppCompatActivity
     /*
      * 视图元素
      */
-    ConstraintLayout MENUVIEW;      // 左侧滑动菜单
+    ConstraintLayout LEFTMENU;      // 左侧滑动菜单
+    ConstraintLayout RIGHTMENU;     // 右侧滑动菜单
     RelativeLayout   CAVANS;        // 主屏画板
     RelativeLayout   MAINContent;   // 主屏
     DrawerLayout     ROOT;          // 根
@@ -50,6 +52,15 @@ public class UniEditActivity extends AppCompatActivity
     Button bnt_play;
     Button bnt_next;
     Button bnt_prev;
+
+    CircleSeekBar csb_rotation;
+    CircleSeekBar csb_alpha;
+    CircleSeekBar csb_scale;
+    TextView tv_rotation;
+    TextView tv_alpha;
+    TextView tv_frameID;
+    TextView tv_scale;
+
 
     /*
      * 管理器及变量
@@ -85,10 +96,8 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void Init()
     {
-        //注册EventBus
-//        EventBus.getDefault().register(this);
-
-        MENUVIEW = findViewById(R.id.uniEditor_layout_left);
+        LEFTMENU = findViewById(R.id.uniEditor_layout_left);
+        RIGHTMENU= findViewById(R.id.uniEditor_layout_right);
         CAVANS   = findViewById(R.id.uniEditor_layout_cavans);
         MAINContent = findViewById(R.id.uniEditor_layout_main);
         ROOT     = findViewById(R.id.uniEditor_layout_root);
@@ -97,8 +106,19 @@ public class UniEditActivity extends AppCompatActivity
         bnt_next = findViewById(R.id.bnt_editor_next);
         bnt_prev = findViewById(R.id.bnt_editor_prev);
 
+        csb_rotation = findViewById(R.id.CSB_item_setting_rotation);
+        csb_alpha    = findViewById(R.id.CSB_item_setting_alpha);
+        csb_scale    = findViewById(R.id.CSB_item_setting_scale);
+
+        tv_alpha     = findViewById(R.id.tv_item_setting_alpha);
+        tv_rotation  = findViewById(R.id.tv_item_setting_rotation);
+        tv_scale     = findViewById(R.id.tv_item_setting_scale);
+        tv_frameID   = findViewById(R.id.tv_editor_frameID);
+
         mMangeer = new UNIElementViewManager(this,CAVANS);
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
+
+        ROOT.setScrimColor(Color.TRANSPARENT);
     }
 
 
@@ -107,6 +127,10 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void mainEvenBinding()
     {
+        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev);
+
+        ROOT.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,Gravity.RIGHT);
+
         CAVANS.setOnDragListener(new View.OnDragListener() {
             private Point startPoint;
             @Override
@@ -144,29 +168,9 @@ public class UniEditActivity extends AppCompatActivity
                 return false;
             }
         });
+
         MAINContent.setOnTouchListener(this);
-//        MAINContent.setOnDragListener(new View.OnDragListener() {
-//            public boolean onDrag(View v, DragEvent event) {
-//                switch (event.getAction()) {
-//                    case DragEvent.ACTION_DRAG_STARTED:
-//                        return true;
-//                    case DragEvent.ACTION_DRAG_ENTERED:
-//                        return true;
-//                    case DragEvent.ACTION_DRAG_LOCATION:
-//                        return true;
-//                    case DragEvent.ACTION_DRAG_EXITED:
-//                        return true;
-//                    case DragEvent.ACTION_DROP:
-//                        Log.i(TAG,"顶层的激活了");
-//                        return false;
-//                    case DragEvent.ACTION_DRAG_ENDED:
-//                        return true;
-//                    default:
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+
         ROOT.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) { }
@@ -184,7 +188,7 @@ public class UniEditActivity extends AppCompatActivity
         mAdapter.setOnItemClickLitener(new UNIMenuElementAdapter.OnItemClickLitener() {
             @Override
             public void onItemClick(View view, int position, float pos_x, float pos_y) {
-
+                //new AlertDialog.Builder
             }
 
             @Override
@@ -199,16 +203,85 @@ public class UniEditActivity extends AppCompatActivity
         });
 
 
-
-        bnt_next.setOnClickListener(new View.OnClickListener() {
+        /*
+         * 调节某一个item的旋转 角度（degree）
+         */
+        csb_rotation.setOnSeekBarChangeListener(new CircleSeekBar.OnSeekBarChangeListener() {
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    tv_rotation.setAlpha(0.3f);
+                }
+            };
             @Override
-            public void onClick(View v) {
-
+            public void onChanged(CircleSeekBar circleSeekBar, int i) {
+                tv_rotation.setAlpha(1);
+                tv_rotation.setText(i+"˚");
+                mMangeer.batchSetRotation(i);
+                handler.removeCallbacks(r);
+                handler.postDelayed(r,1000);
             }
         });
-        bnt_prev.setOnClickListener(new View.OnClickListener() {
+        /*
+         * 调节某一个item的透明度 [0,100]
+         */
+        csb_alpha.setOnSeekBarChangeListener(new CircleSeekBar.OnSeekBarChangeListener() {
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    tv_alpha.setAlpha(0.3f);
+                }
+            };
+
             @Override
-            public void onClick(View v) {
+            public void onChanged(CircleSeekBar circleSeekBar, int i) {
+                tv_alpha.setAlpha(1);
+                tv_alpha.setText(""+i);
+                mMangeer.batchSetAlpha((100-i)/100.0f);
+                handler.removeCallbacks(r);
+                handler.postDelayed(r,1000);
+            }
+        });
+
+        csb_scale.setOnSeekBarChangeListener(new CircleSeekBar.OnSeekBarChangeListener() {
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    tv_scale.setAlpha(0.3f);
+                }
+            };
+            @Override
+            public void onChanged(CircleSeekBar circleSeekBar, int i) {
+                tv_scale.setAlpha(1);
+                float cur_scale = i*i/2500.f;
+                tv_scale.setText( (int)(cur_scale*100)+"%");
+                mMangeer.batchSetScale(cur_scale);
+                handler.removeCallbacks(r);
+                handler.postDelayed(r,1000);
+            }
+        });
+
+        /*
+         * 为画布上的元素添加点击事件
+         */
+        mMangeer.setOnUniItemClickLitener(new UNIElementViewManager.OnUniItemClickLitener() {
+            @Override
+            public void onUniItemClick(UNIElementView view) {
+                ROOT.openDrawer(Gravity.RIGHT);
+                int cur_alpha = (int) (100-view.getAlpha()*100);        // 透明度 [0, 100]
+                int cur_rotation = (int)view.getRotation();             // 旋转角度[0,360]
+                int cur_scale = (int) Math.sqrt(view.getScaleX()*2500);
+                csb_alpha.setCurProcess(cur_alpha);
+                tv_alpha.setText(cur_alpha+"");
+                csb_rotation.setCurProcess(cur_rotation);
+                tv_rotation.setText(cur_rotation+"˚");
+                csb_scale.setCurProcess(cur_scale);
+                tv_scale.setText((int)(view.getScaleX()*100)+"%");
+
+                // 将物体放置到左侧中心
 
             }
         });
@@ -217,35 +290,27 @@ public class UniEditActivity extends AppCompatActivity
     private void setMenu(Context context)
     {
         UNIElementView ansU = new UNIElementView(context);
-        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_favorite));
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_favorite));
         u.add(ansU);
         ansU = new UNIElementView(context);
-        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_favorite_border_grey_500_24dp));
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_favorite_border_grey_500_24dp));
         u.add(ansU);
         ansU = new UNIElementView(context);
-        ansU.setThumb(Graphicstools.imgtool.res2bitmap(context,R.drawable.ic_border_color_grey_400_24dp));
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_border_color_grey_400_24dp));
         u.add(ansU);
 
         mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,u);
 
-        RecyclerView rv = MENUVIEW.findViewById(R.id.rv_editor_uni_item_menu);
+        RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
         rv.setLayoutManager(new GridLayoutManager(context,4));
         rv.setAdapter(mAdapter);
     }
 
-    /**
-     * Called when a touch event is dispatched to a view. This allows listeners to
-     * get a chance to respond before the target view.
-     *
-     * @param v     The view the touch event has been dispatched to.
-     * @param event The MotionEvent object containing full information about
-     *              the event.
-     * @return True if the listener has consumed the event, false otherwise.
-     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int rawX = (int) event.getRawX();
         int rawY = (int) event.getRawY();
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = rawX;
@@ -271,82 +336,30 @@ public class UniEditActivity extends AppCompatActivity
         return mScaleGes;
     }
 
-    /**
-     * Responds to scaling events for a gesture in progress.
-     * Reported by pointer motion.
-     *
-     * @param detector The detector reporting the event - use this to
-     *                 retrieve extended info about event state.
-     * @return Whether or not the detector should consider this event
-     * as handled. If an event was not handled, the detector
-     * will continue to accumulate movement until an event is
-     * handled. This can be useful if an application, for example,
-     * only wants to update scaling factors if the change is
-     * greater than 0.01.
-     */
+
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scale2Translaform = detector.getScaleFactor();
-        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)*1.4f;
-        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)*1.4f;
+        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)+0.6f;
+        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)+0.6f;
         SCALE_FACTOR = scaleX;
 
-        //设置放大缩小锚点
-        CAVANS.setPivotX(detector.getFocusX());
-        CAVANS.setPivotY(detector.getFocusY());
         if(!isDrawerOpen)
-            CAVANS.setScaleX(scaleX < 0.4f? 0.4f:scaleX);
-        CAVANS.setScaleY(scaleY < 0.4f? 0.4f:scaleY);
+
+            CAVANS.setScaleX(scaleX);
+            CAVANS.setScaleY(scaleY);
 
         return false;
     }
-
-    /**
-     * Responds to the beginning of a scaling gesture. Reported by
-     * new pointers going down.
-     *
-     * @param detector The detector reporting the event - use this to
-     *                 retrieve extended info about event state.
-     * @return Whether or not the detector should continue recognizing
-     * this gesture. For example, if a gesture is beginning
-     * with a focal point outside of a region where it makes
-     * sense, onScaleBegin() may return false to ignore the
-     * rest of the gesture.
-     */
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
         return true;
     }
-
-    /**
-     * Responds to the end of a scale gesture. Reported by existing
-     * pointers going up.
-     * <p>
-     * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
-     * and {@link ScaleGestureDetector#getFocusY()} will return focal point
-     * of the pointers remaining on the screen.
-     *
-     * @param detector The detector reporting the event - use this to
-     *                 retrieve extended info about event state.
-     */
     @Override
-    public void onScaleEnd(ScaleGestureDetector detector) {
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(List<Property> Props, List<Bitmap> Imgs)
-    {
-        if (mMangeer!=null)
-        {
-            mMangeer.updateCanvas(Props,Imgs);
-        }
-    }
+    public void onScaleEnd(ScaleGestureDetector detector) {  }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-//        EventBus.getDefault().unregister(this);
     }
 }

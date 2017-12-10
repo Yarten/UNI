@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="120dp"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+
+    <TextView
+        android:id="@+id/tv_item_setting_alpha_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:rotation="-45"
+        android:text="透明度"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/Layout_item_setting_alpha"
+        app:layout_constraintTop_toTopOf="@+id/Layout_item_setting_alpha" />
+
+    <TextView
+        android:id="@+id/tv_item_setting_scale_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="-45"
+        android:text="尺度"
+        app:layout_constraintStart_toStartOf="@+id/Layout_item_setting_scale"
+        app:layout_constraintTop_toTopOf="@+id/Layout_item_setting_scale" />
+
+    <TextView
+        android:id="@+id/tv_item_setting_Rotation_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rotation="-45"
+        android:text="旋转"
+        app:layout_constraintStart_toStartOf="@+id/Layout_item_setting_rotation"
+        app:layout_constraintTop_toTopOf="@+id/Layout_item_setting_rotation" />
+
+
+    <RelativeLayout
+        android:id="@+id/Layout_item_setting_rotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="false"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="5dp"
+        android:paddingLeft="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/Layout_item_setting_scale"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_item_setting_rotation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/CSB_item_setting_rotation"
+            android:layout_alignRight="@id/CSB_item_setting_rotation"
+            android:layout_centerVertical="true"
+            android:gravity="center" />
+
+        <io.feeeei.circleseekbar.CircleSeekBar
+            android:id="@+id/CSB_item_setting_rotation"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="true"
+            android:padding="8dp"
+            app:wheel_has_pointer_shadow="true"
+            app:wheel_has_wheel_shadow="true"
+            app:wheel_max_process="360"
+            app:wheel_pointer_radius="12dp"
+            app:wheel_reached_width="13dp"
+            app:wheel_shadow_radius="0dp"
+            app:wheel_unreached_color="#f0f0f0"
+            app:wheel_unreached_width="12dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/Layout_item_setting_scale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/Layout_item_setting_alpha"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Layout_item_setting_rotation">
+
+        <TextView
+            android:id="@+id/tv_item_setting_scale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/CSB_item_setting_scale"
+            android:layout_alignRight="@id/CSB_item_setting_scale"
+            android:layout_centerVertical="true"
+            android:gravity="center" />
+
+        <io.feeeei.circleseekbar.CircleSeekBar
+            android:id="@+id/CSB_item_setting_scale"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="true"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:wheel_cur_process="50"
+            app:wheel_has_pointer_shadow="true"
+            app:wheel_has_wheel_shadow="true"
+            app:wheel_max_process="100"
+            app:wheel_pointer_radius="12dp"
+            app:wheel_reached_width="13dp"
+            app:wheel_shadow_radius="0dp"
+            app:wheel_unreached_color="#f0f0f0"
+            app:wheel_unreached_width="12dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/Layout_item_setting_alpha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Layout_item_setting_scale">
+
+        <TextView
+            android:id="@+id/tv_item_setting_alpha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/CSB_item_setting_alpha"
+            android:layout_alignRight="@id/CSB_item_setting_alpha"
+            android:layout_centerVertical="true"
+            android:gravity="center" />
+
+        <io.feeeei.circleseekbar.CircleSeekBar
+            android:id="@+id/CSB_item_setting_alpha"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="false"
+            android:layout_marginRight="3dp"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:wheel_has_pointer_shadow="true"
+            app:wheel_has_wheel_shadow="true"
+            app:wheel_max_process="100"
+            app:wheel_pointer_radius="12dp"
+            app:wheel_reached_width="13dp"
+            app:wheel_shadow_radius="0dp"
+            app:wheel_unreached_color="#f0f0f0"
+            app:wheel_unreached_width="12dp" />
+
+    </RelativeLayout>
+
+
+</android.support.constraint.ConstraintLayout>

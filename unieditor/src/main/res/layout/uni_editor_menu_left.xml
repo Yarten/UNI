@@ -2,8 +2,8 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#fff"
     android:layout_width="280dp"
-    android:background="#f1e9cd"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
