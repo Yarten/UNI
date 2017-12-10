@@ -34,7 +34,7 @@ public class Property
         this(id, 0, 0, 0, 0,0, Mode.Linear);
     }
 
-    public Property(int id, int x, int y, int height, int width, int opacity, Mode mode) {
+    public Property(int id, int x, int y, int height, int width, float opacity, Mode mode) {
         Id = id;
         this.x = x;
         this.y = y;

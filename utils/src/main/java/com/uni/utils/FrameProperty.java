@@ -12,11 +12,11 @@ public class FrameProperty {
 
     public int Id;
 
-    public float duration;
+    public Double duration;
 
-    public float interval;
+    public Double interval;
 
-    public FrameProperty(int id, float duration, float interval) {
+    public FrameProperty(int id, Double duration, Double interval) {
         Id = id;
         this.duration = duration;
         this.interval = interval;
