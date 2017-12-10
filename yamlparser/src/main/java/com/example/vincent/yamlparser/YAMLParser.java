@@ -302,5 +302,8 @@ public class YAMLParser {
         return (curElementList.get(mCurElementIndex)).url;
     }
 
+    public Brief getBrief(){
+        return this.brief;
+    }
 
 }
