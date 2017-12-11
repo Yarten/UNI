@@ -30,6 +30,8 @@ public class UNICache
         CAN.logout(this);
     }
 
+    public List<KeyFrame> getFrames(){return frames;}
+
     public void clear()
     {
         frames.clear();

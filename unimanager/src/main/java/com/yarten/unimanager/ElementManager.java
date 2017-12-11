@@ -9,10 +9,13 @@ import com.uni.utils.Brief;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.Property;
+import com.yarten.unicache.KeyFrame;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +41,25 @@ class ElementManager
     ElementManager(Context context)
     {
         this.context = context;
+    }
+
+    public List<Brief> getElements()
+    {
+        String[] items =
+                {
+                        "cloud", "dialog", "dialog2", "dialog3", "dialog4", "low", "high", "people", "sun"
+                };
+        for(int i = 0; i < items.length; i++)
+            items[i] = "System/" + items[i];
+
+        List<Brief> menu = new LinkedList<>();
+        for(int i = 0; i < items.length; i++)
+        {
+            Brief brief = getBrief(items[i]);
+            menu.add(brief);
+        }
+
+        return menu;
     }
 
     public UNIElement getElement(String url)
@@ -105,6 +127,9 @@ class ElementManager
         if(source.equals("System"))
         {
             // TODO: 从 /Files/DB 搜索是否存在该UNI元素，存在则加载
+            path.dir = context.getDir("files/" + name, Context.MODE_PRIVATE);
+            path.name = name;
+            return path;
         }
         else if(source.equals("Image"))
         {
@@ -115,6 +140,7 @@ class ElementManager
         else
         {
             // TODO: 从用户 /User/DB 搜索是否存在该元素，存在则加载元素
+            if(true)
             {
                 path.dir = context.getDir(source, Context.MODE_PRIVATE);
                 path.name = name;

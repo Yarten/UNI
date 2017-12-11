@@ -1,6 +1,9 @@
 package com.uni.app;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -8,11 +11,17 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.vincent.yamlparser.YAMLParser;
 import com.stone.vega.library.VegaLayoutManager;
 import com.uni.uniplayer.UNIFrame;
 import com.uni.uniplayer.UNIView;
+import com.uni.utils.Brief;
+import com.uni.utils.GraphicsTools;
 import com.uni.utils.GraphicsTools.statusBar;
+import com.uni.utils.Property;
+import com.yarten.unimanager.UNIManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,35 +38,44 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        makeSomeNoise();
         init();
         evenbing();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
     private void init()
     {
+        UNIManager.instance.init(this);
 
         statusBar.immerseStatusBar(this);
 
-//        List<UNIFrame> ls = new ArrayList<>();
+        List<UNIFrame> ls = new ArrayList<>();
 
-        List<String> l = new ArrayList<>();
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-
-
+//        List<String> l = new ArrayList<>();
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
 
 
-        mAdapter = new UNIFrameAdapter<>(getApplicationContext(),l);
+
+
+        mAdapter = new UNIFrameAdapter<UNIFrame>(this);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
 
@@ -73,18 +91,17 @@ public class MainActivity extends AppCompatActivity {
     private void evenbing()
     {
         mAdapter.setOnItemClickLitener(new UNIFrameAdapter.OnItemClickLitener() {
-            boolean toggle = false;
+
             @Override
             public void onFrameClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"click",Toast.LENGTH_SHORT).show();
 
                 UNIView uniView = (UNIView)view;
-                toggle = !toggle;
-                if(toggle)
+                if(uniView.isPlaying())
                 {
-                    uniView.play();
+                    uniView.stop();
                 }
-                else uniView.stop();
+                else uniView.play();
             }
 
             @Override
@@ -113,12 +130,48 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private UNIFrame createUNIFrame()
+    class Element
     {
-        UNIFrame uniFrame = new UNIFrame();
+        Element(String name, int sourceID)
+        {
+            this.name = name;
+            this.sourceID = sourceID;
+        }
 
+        String name;
+        int sourceID;
+    }
 
+    Element[] elements = {
+            new Element("cloud", R.drawable.cloud),
+            new Element("dialog", R.drawable.dialog),
+            new Element("dialog2", R.drawable.dialog2),
+            new Element("dialog3", R.drawable.dialog3),
+            new Element("dialog4", R.drawable.dialog4),
+            new Element("low", R.drawable.low),
+            new Element("high", R.drawable.high),
+            new Element("people", R.drawable.people),
+            new Element("sun", R.drawable.sun)
+    };
 
-        return uniFrame;
+    private void makeSomeNoise()
+    {
+        Resources resources = getResources();
+
+        for(int i = 0; i < elements.length; i++)
+        {
+            File root = getDir("files/" + elements[i].name, MODE_PRIVATE);
+            File imageDir = getDir("files/" + elements[i].name + "/Images", MODE_PRIVATE);
+            Bitmap image = BitmapFactory.decodeResource(resources, elements[i].sourceID);
+            GraphicsTools.saveToLocal(imageDir, elements[i].name, image);
+            GraphicsTools.saveToLocal(root, "thumb.png", image);
+
+            YAMLParser parser = new YAMLParser(root, elements[i].name + ".yaml");
+            parser.setBrief("AA", "BB", "12-11", "System/" + elements[i].name, "Demo");
+            parser.addFrame(0, 0);
+            Property property = new Property();
+            parser.addElement(property, "System/" + elements[i].name);
+            parser.saveYAML();
+        }
     }
 }

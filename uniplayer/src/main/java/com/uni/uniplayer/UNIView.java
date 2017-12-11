@@ -109,6 +109,8 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
         renderThread.start();
     }
 
+    public boolean isPlaying(){return isPlay;}
+
     synchronized public void pause()
     {
         isPlay = false;

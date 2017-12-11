@@ -14,9 +14,9 @@ import java.util.Map;
  * Created by yfic on 2017/12/9.
  */
 
-class KeyFrame
+public class KeyFrame
 {
-    class Element
+    public static class Element
     {
         Element()
         {
@@ -37,9 +37,9 @@ class KeyFrame
         }
 
 
-        Bitmap image;
-        Property property;
-        String url;
+        public Bitmap image;
+        public Property property;
+        public String url;
     }
 
     SparseArray<Element> elements = new SparseArray<>();
@@ -82,4 +82,8 @@ class KeyFrame
 
         return r;
     }
+
+    public SparseArray<Element> getElements(){return elements;}
+
+    public FrameProperty getFrameProperty(){return frameProperty;}
 }

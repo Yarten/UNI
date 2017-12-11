@@ -1,10 +1,15 @@
 package com.uni.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.SparseArray;
+import android.view.Menu;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +84,62 @@ public class CAN
             public Bitmap image;
             public String url;
         }
+
+        /**
+         * 请求更新元素列表。可用于Editor、主界面等<br>
+         * number: 请求更新的数量<br>
+         * startFrom: 从列表中的第几项开始更新（Editor只要传入当前item的数量即可）<br>
+         * what: 用于区分不同地方的列表更新
+         */
+        public static class Menu
+        {
+            public enum Type
+            {
+                EditorMenu,
+                MainMenu
+            }
+
+            public static class Request
+            {
+                public int number;
+                public int startFrom;
+                public Type what;
+            }
+
+            public static class Reply
+            {
+                public Type what;
+                public List<Brief> items;
+            }
+        }
+//        public static class MenuRequest
+//        {
+//            public enum Type
+//            {
+//                EditorMenu,
+//                MainMenu
+//            }
+//
+//            public int number;
+//            public int startFrom;
+//            public Type what;
+//        }
+//
+//        public static class MenuUpdate
+//        {
+//            public List<Brief> items;
+//        }
+
+        public static class EditorCommit
+        {
+            public enum State
+            {
+                Save, Drop, Draft
+            }
+
+            public Brief brief;
+            public State state;
+        }
     }
 
     /**
@@ -86,6 +147,23 @@ public class CAN
      */
     public static class DataBus
     {
+        public static void updateMenu(List<Brief> items)
+        {
+            Package.Menu.Reply pkg = new Package.Menu.Reply();
+            pkg.items = items;
+            pkg.what = Package.Menu.Type.EditorMenu;
+            CAN.send(pkg);
+        }
+
+        public static void requireMenu(int number, int startFrom)
+        {
+            Package.Menu.Request pkg = new Package.Menu.Request();
+            pkg.number = number;
+            pkg.startFrom = startFrom;
+            pkg.what = Package.Menu.Type.EditorMenu;
+            CAN.send(pkg);
+        }
+
         /**
          * UNICache主动更新UNIEditor，只更新当前帧。<br>
          * 携带了帧中元素的数据，按ID索引<br>
@@ -201,6 +279,11 @@ public class CAN
         }
 
 
+        /**
+         * 更新某个帧下的某个元素的属性
+         * @param frameID
+         * @param prop
+         */
         public static void updateElement(Integer frameID, Property prop)
         {
             Package.ElementRequest pkg = new Package.ElementRequest();
@@ -210,11 +293,26 @@ public class CAN
             pkg.how = prop;
             CAN.send(pkg);
         }
+
+        public static void commit(Brief brief, CAN.Package.EditorCommit.State state)
+        {
+            Package.EditorCommit pkg = new Package.EditorCommit();
+            pkg.brief = brief;
+            pkg.state = state;
+            CAN.send(pkg);
+        }
     }
 
     public static class Control
     {
-
+        public static void requireMainMenu(int number ,int startFrom)
+        {
+            Package.Menu.Request pkg = new Package.Menu.Request();
+            pkg.what = Package.Menu.Type.MainMenu;
+            pkg.number = number;
+            pkg.startFrom = startFrom;
+            CAN.send(pkg);
+        }
     }
 
     /**

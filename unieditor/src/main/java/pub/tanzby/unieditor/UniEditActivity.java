@@ -27,6 +27,8 @@ import com.uni.utils.CAN;
 import com.uni.utils.GraphicsTools;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,7 @@ public class UniEditActivity extends AppCompatActivity
         Init();
 
         setMenu(this);
+        CAN.DataBus.requireMenu(10, 0);
 
         mainEvenBinding();
     }
@@ -333,6 +336,12 @@ public class UniEditActivity extends AppCompatActivity
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
         rv.setLayoutManager(new GridLayoutManager(context,3));
         rv.setAdapter(mAdapter);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMenu(CAN.Package.Menu.Reply pkg)
+    {
+        mAdapter.update(pkg.items);
     }
 
     @Override

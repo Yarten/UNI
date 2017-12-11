@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.uni.utils.Brief;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,6 +38,22 @@ public class UNIMenuElementAdapter<E> extends RecyclerView.Adapter<UNIMenuElemen
                 .from(mContext)
                 .inflate(R.layout.uni_editor_menu_item, parent,false));
         return h;
+    }
+
+    public void update(List<Brief> items)
+    {
+        int size = items.size();
+        itemList = new ArrayList<>(size);
+
+        for(int i = 0; i < size; i++)
+        {
+            UNIElementView item = (UNIElementView) itemList.get(i);
+            Brief brief = items.get(i);
+            item.setURL(brief.url);
+            item.setImageBitmap(brief.thumb);
+        }
+
+        notify();
     }
 
     @Override

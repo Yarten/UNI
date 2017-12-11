@@ -12,10 +12,10 @@ import java.util.Date;
 
 public class Brief
 {
-    public String author;
-    public String description;
-    public String date;
-    public Bitmap thumb;
-    public String url;
-    public String title;
+    public String author = "";
+    public String description = "";
+    public String date = "";
+    public Bitmap thumb = null;
+    public String url = "";
+    public String title = "";
 }

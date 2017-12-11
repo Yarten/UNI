@@ -88,6 +88,11 @@ public class UNIElementView extends AppCompatImageView {
         updatePropoty();
     }
 
+    public void setURL(String url)
+    {
+        mUrl = url;
+    }
+
 
     /**
      * 重写函数

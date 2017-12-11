@@ -250,6 +250,7 @@ public class UNIElementViewManager {
             mUniViewItem.setPositionTo(x,y); // TODO batch 添加时应该区别最终位置
             mUniViewItem.setImageBitmap(ori.mThumb);
 
+
             // 为每一个添加到cavans 的元素
             // 绑定 拖拽事件
             mUniViewItem.setOnLongClickListener(new View.OnLongClickListener() {
