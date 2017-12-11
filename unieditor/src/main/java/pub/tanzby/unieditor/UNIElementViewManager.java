@@ -1,17 +1,24 @@
 package pub.tanzby.unieditor;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FrameProperty;
+import com.uni.utils.GraphicsTools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +48,9 @@ public class UNIElementViewManager {
     public Button bnt_ctrl_play;
     public Button bnt_ctrl_next;
     public Button bnt_ctrl_prev;
+    public Button bnt_ctrl_save;
+    public Button bnt_ctrl_dele;
+    public Button bnt_ctrl_inse;
 
 
     // 当前被选中的元素，通常用于批量移动
@@ -71,8 +81,11 @@ public class UNIElementViewManager {
         current_selected_element = new ArrayList<>();
         current_waiting_added_element = new ArrayList<>();
 
-        //注册EventBus
+        // 注册EventBus
         EventBus.getDefault().register(this);
+
+        // 绑定Canvans更新
+
     }
 
     public Integer getFrameID()
@@ -92,29 +105,33 @@ public class UNIElementViewManager {
      * @param next 用于执行 "下一帧" 的 按钮
      * @param prev 用于执行 "上一帧" 的 按钮
      */
-    public void setCtrlButtonGroup(@NonNull Button play, @NonNull Button next, @NonNull Button prev)
+    public void setCtrlButtonGroup(@NonNull Button play,
+                                   @NonNull final Button next,
+                                   @NonNull Button prev,
+                                   @NonNull Button save,
+                                   @NonNull Button dele,
+                                   @NonNull Button inse)
     {
        bnt_ctrl_play=play;
        bnt_ctrl_prev=prev;
        bnt_ctrl_next=next;
+       bnt_ctrl_save=save;
+       bnt_ctrl_dele=dele;
+       bnt_ctrl_inse=inse;
 
        bnt_ctrl_next.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                Toast.makeText(mContext,"next",Toast.LENGTH_SHORT).show();
-               updateNextFrame();
+               requestNextFrame();
            }
        });
         bnt_ctrl_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"play",Toast.LENGTH_SHORT).show();
-
                 // TODO 确保 保存数据到服务器
-
                 // TODO 跳转到 播放界面 或者重置画布直接播，如果是后者则需要重写按钮的事件
-
-
             }
         });
 
@@ -122,16 +139,58 @@ public class UNIElementViewManager {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"previous",Toast.LENGTH_SHORT).show();
-                updatePrevFrame();
+                requestPrevFrame();
             }
         });
 
-        bnt_ctrl_play.setOnLongClickListener(new View.OnLongClickListener() {
+        bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 Toast.makeText(mContext,"insert",Toast.LENGTH_SHORT).show();
-                addNewFrame();
-                return true;
+                requestNewFrame();
+            }
+        });
+
+        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext,"delete",Toast.LENGTH_SHORT).show();
+                deleteCurrentFrame();
+            }
+        });
+
+        bnt_ctrl_save.setOnClickListener(new View.OnClickListener() {
+            private EditText edit = new EditText(mContext);
+            private AlertDialog dialog = new AlertDialog.Builder(mContext)
+                    .setView(edit)
+                    .setTitle("正在保存UNI，请确认")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("确认",null).create();
+
+            @Override
+            public void onClick(View v) {
+                edit.setHint("UNI的名字");
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (true){
+                            saveCavans();
+                            Brief b = new Brief();
+                            b.title = edit.getText().toString();
+                            b.thumb = GraphicsTools.getShotCut(mCanvans);
+                            CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
+                        }
+                        else {
+                            edit.setError("输入错误");
+                        }
+                    }
+                });
             }
         });
     }
@@ -259,7 +318,7 @@ public class UNIElementViewManager {
                     current_selected_element.clear();
                     current_selected_element.add((UNIElementView)v);
                     ClipData data =  ClipData.newPlainText("ID","");
-                    v.startDrag(data,new View.DragShadowBuilder(v),null,0);
+                    v.startDrag(data,UNIDragShadowBuilder.fromUNI(mContext,(UNIElementView)v),null,0);
                     return false;
                 }
             });
@@ -280,6 +339,19 @@ public class UNIElementViewManager {
         current_waiting_added_element.clear();
     }
 
+    /**
+     * 保存Cavans上所有的元素
+     */
+    private void saveCavans() {
+        for (UNIElementView uni: current_added_element) {
+            CAN.DataBus.updateElement(frameID,uni.mProperty);
+        }
+    }
+
+
+    /**
+     * 重置画板
+     */
     private void resetCavans()
     {
 
@@ -300,7 +372,7 @@ public class UNIElementViewManager {
     /**
      * 请求上一帧
      */
-    public void updatePrevFrame()
+    public void requestPrevFrame()
     {
         if (frameID > 0)
             frameID--;
@@ -311,7 +383,7 @@ public class UNIElementViewManager {
     /**
      * 请求下一帧
      */
-    public void updateNextFrame()
+    public void requestNextFrame()
     {
         if (hasNext) {
             frameID++;
@@ -324,7 +396,7 @@ public class UNIElementViewManager {
      * 在当前帧的位置插入一帧，如 1,2,3,4 当前在 2 时 * 将会插入到 1 2 * 3 4
      * 添加了之后直接跳到这一个帧
      */
-    public void addNewFrame()
+    public void requestNewFrame()
     {
         // 通知服务
         CAN.DataBus.addFrame(frameID);
@@ -432,6 +504,8 @@ public class UNIElementViewManager {
             u.mProperty = pkg.props.get(i);
         }
     }
+
+
 
 
     @Override

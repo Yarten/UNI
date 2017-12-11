@@ -54,6 +54,9 @@ public class UniEditActivity extends AppCompatActivity
     Button bnt_play;
     Button bnt_next;
     Button bnt_prev;
+    Button bnt_save;
+    Button bnt_delete;
+    Button bnt_insert;
 
     CircleSeekBar csb_rotation;
     CircleSeekBar csb_alpha;
@@ -108,6 +111,7 @@ public class UniEditActivity extends AppCompatActivity
         bnt_play = findViewById(R.id.bnt_editor_play);
         bnt_next = findViewById(R.id.bnt_editor_next);
         bnt_prev = findViewById(R.id.bnt_editor_prev);
+        bnt_save = findViewById(R.id.bnt_editor_save);
 
         csb_rotation = findViewById(R.id.CSB_item_setting_rotation);
         csb_alpha    = findViewById(R.id.CSB_item_setting_alpha);
@@ -130,7 +134,7 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void mainEvenBinding()
     {
-        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev);
+        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev,bnt_save,bnt_insert,bnt_delete);
 
         ROOT.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,Gravity.RIGHT);
 
@@ -171,6 +175,7 @@ public class UniEditActivity extends AppCompatActivity
                 return false;
             }
         });
+
 
         MAINContent.setOnTouchListener(this);
 

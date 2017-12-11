@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.view.View;
 
 /**
@@ -43,6 +44,22 @@ public class UNIDragShadowBuilder extends View.DragShadowBuilder {
         builder.shadow.setBounds(0, 0, builder.shadow.getMinimumWidth(), builder.shadow.getMinimumHeight());
 
         return builder;
+    }
+
+    public static View.DragShadowBuilder fromUNI(Context context,UNIElementView uni)
+    {
+        if (uni==null)  {
+            throw new IllegalArgumentException("uni cannot be null");
+        }
+
+        uni.setDrawingCacheEnabled(true);
+        Bitmap tBitmap = uni.getDrawingCache();
+        tBitmap = tBitmap.createBitmap(tBitmap);
+        tBitmap= ThumbnailUtils.extractThumbnail(tBitmap,
+                (int) (uni.getWidth() *uni.getScaleX()),
+                (int) (uni.getHeight()*uni.getScaleY()) );
+
+        return fromBitmap(context,tBitmap);
     }
 
     @Override
