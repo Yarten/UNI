@@ -91,9 +91,9 @@
             android:shadowRadius="5"
             android:text="DELE"
             android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
             app:layout_constraintEnd_toStartOf="@+id/bnt_editor_add"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_save"
-            tools:layout_editor_absoluteY="317dp" />
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_save" />
 
         <Button
             android:id="@+id/bnt_editor_add"
@@ -104,9 +104,9 @@
             android:shadowRadius="5"
             android:text="ADD"
             android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete"
-            tools:layout_editor_absoluteY="317dp" />
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete" />
 
         <Button
 
