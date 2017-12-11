@@ -290,20 +290,48 @@ public class UniEditActivity extends AppCompatActivity
     // TODO: 修改成由通知来设置menu
     private void setMenu(Context context)
     {
-        UNIElementView ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_favorite));
-        u.add(ansU);
+        UNIElementView ansU;
+
         ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_favorite_border_grey_500_24dp));
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.people));
         u.add(ansU);
+
         ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_border_color_grey_400_24dp));
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog));
         u.add(ansU);
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.low));
+        u.add(ansU);
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.clound));
+        u.add(ansU);
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog2));
+        u.add(ansU);
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.high));
+        u.add(ansU);
+
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog3));
+        u.add(ansU);
+
+        ansU = new UNIElementView(context);
+        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog4));
+        u.add(ansU);
+
+
+
 
         mAdapter = new UNIMenuElementAdapter<>(context,u);
 
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
-        rv.setLayoutManager(new GridLayoutManager(context,4));
+        rv.setLayoutManager(new GridLayoutManager(context,3));
         rv.setAdapter(mAdapter);
     }
 

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.stone.vega.library.VegaLayoutManager;
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     UNIFrameAdapter mAdapter;
 
+    ImageButton bnt_add_new;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,17 +38,35 @@ public class MainActivity extends AppCompatActivity {
 
         statusBar.immerseStatusBar(this);
 
-        List<UNIFrame> ls = new ArrayList<>();
+//        List<UNIFrame> ls = new ArrayList<>();
+
+        List<String> l = new ArrayList<>();
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
 
 
 
-        mAdapter = new UNIFrameAdapter<>(getApplicationContext(),ls);
+
+        mAdapter = new UNIFrameAdapter<>(getApplicationContext(),l);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
 
         mRecyclerView.setLayoutManager(new VegaLayoutManager());
 
         mRecyclerView.setAdapter(mAdapter);
+
+
+        bnt_add_new = findViewById(R.id.bnt_add_new_uni_frame);
 
     }
 
@@ -78,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onEditButtomClick(View view, int position) {
+                Intent nwIntend = new Intent(MainActivity.this,UniEditActivity.class);
+                startActivity(nwIntend);
+            }
+        });
+
+        bnt_add_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent nwIntend = new Intent(MainActivity.this,UniEditActivity.class);
                 startActivity(nwIntend);
             }
