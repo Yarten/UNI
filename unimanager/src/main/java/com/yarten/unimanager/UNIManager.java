@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.example.vincent.yamlparser.YAMLParser;
+import com.uni.uniplayer.UNIElement;
 import com.uni.uniplayer.UNIFrame;
+import com.uni.utils.Brief;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.Property;
@@ -23,27 +25,25 @@ public class UNIManager
 
     private UNIManager(){}
 
+    private ElementManager elementManager = null;
+
     private UNICache cache = new UNICache();
 
     private UNIFrame uniFrame = new UNIFrame();
 
     private Context context;
 
-    private File cacheDir;
-
     public void init(Context context)
     {
         this.context = context;
-        cacheDir = context.getCacheDir();
+        elementManager = new ElementManager(context);
     }
 
-    @Deprecated
     public boolean loadFromCache(String yaml, boolean editMode)
     {
-        return loadYaml(cacheDir, yaml, editMode);
+        return loadYaml(context.getCacheDir(), yaml, editMode);
     }
 
-    @Deprecated
     public boolean loadYaml(File dir, String yaml, boolean editMode)
     {
         YAMLParser parser = new YAMLParser(dir, yaml);
@@ -57,35 +57,37 @@ public class UNIManager
             while(parser.hasNextFrame() != -1)
             {
                 FrameProperty frameProperty = parser.getFrame();
-                cache.addFrame(frameProperty.Id);
+                cache.addFrame(frameProperty.Id, frameProperty);
 
                 while (parser.hasNextElement() != -1)
                 {
                     Property property = parser.getElement();
-                    // TODO: 获得URL，根据URL获得元素的缩略图
+                    String url = parser.getElementUrl();
+                    Brief brief = elementManager.getBrief(url);
+                    cache.addElement(frameProperty.Id, property.ID, property, brief.thumb, brief.url);
                 }
             }
         }
         else
         {
-            // TODO: 播放模式初始化
+            uniFrame.init();
+            uniFrame.setLoop(false);
+
+            while(parser.hasNextFrame() != -1)
+            {
+                FrameProperty frameProperty = parser.getFrame();
+                uniFrame.addFrame(frameProperty.interval, frameProperty.duration);
+
+                while(parser.hasNextElement() != -1)
+                {
+                    Property property = parser.getElement();
+                    String url = parser.getElementUrl();
+                    UNIElement element = elementManager.getElement(url);
+                    uniFrame.addElement(property.ID, element, property);
+                }
+            }
         }
 
         return true;
-    }
-
-    void demo(File dir, boolean editMode)
-    {
-        if(editMode)
-        {
-            cache.clear();
-            cache.addFrame(0);
-
-
-        }
-        else
-        {
-
-        }
     }
 }

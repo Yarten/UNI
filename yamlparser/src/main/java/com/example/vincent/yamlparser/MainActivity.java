@@ -30,11 +30,11 @@ public class MainActivity extends AppCompatActivity {
         Property p1 = new Property(1);
         Property p2 = new Property(2);
         
-        parser.addFrame(0.1, 0.2);
+        parser.addFrame(1000, 1000);
         parser.addElement(p1, "p1_url");
         parser.addElement(p2, "p2_url");
         
-        parser.addFrame(0.3, 0.4);
+        parser.addFrame(1000, 1000);
         parser.addElement(new Property(3), "p3_url");
         parser.addElement(new Property(4), "p4_url");
 

@@ -71,7 +71,7 @@ public class YAMLParser {
         mFileName = fileName;
     }
 
-    public void addFrame (Double duration, Double interval){
+    public void addFrame (long duration, long interval){
 
         mFrames.add(new FrameProperty(mFrames.size()+1, duration, interval));
 
@@ -177,7 +177,8 @@ public class YAMLParser {
                     elementMap.put("y",element.property.y);
                     elementMap.put("height",element.property.height);
                     elementMap.put("width", element.property.width);
-                    elementMap.put("opacity", (Float)element.property.opacity);
+                    elementMap.put("opacity", element.property.opacity);
+                    elementMap.put("rotation",element.property.rotation);
                     elementMap.put("mode",element.property.mode);
                     elementMap.put("url", element.url);
 
@@ -237,8 +238,8 @@ public class YAMLParser {
            for(String key: Frames.keySet()){
                Map<String, Object> frame = (Map<String, Object>) Frames.get(key);
                int Id = (Integer) frame.get("Id");
-               Double duration = (Double) frame.get("duration");
-               Double interval =  (Double) frame.get("interval");
+               long duration = (Long) frame.get("duration");
+               long interval =  (Long) frame.get("interval");
                mFrames.add(new FrameProperty(Id, duration, interval));
            }
 
@@ -255,9 +256,10 @@ public class YAMLParser {
                    int height = (Integer) elementMap.get("height");
                    int width = (Integer) elementMap.get("width");
                    Double opacity = (Double) ( elementMap.get("opacity"));
+                   Double rotation = (Double) (elementMap.get("rotation"));
                    Property.Mode mode = (Property.Mode) elementMap.get("mode");
                    url = (String) elementMap.get("url");
-                   Property p = new Property(Id, x, y, height, width, opacity.floatValue(), mode);
+                   Property p = new Property(Id, x, y, height, width, opacity.floatValue(), rotation.floatValue(), mode);
                    elementList.add(new MProperty(p, url));
                    if (Id > mMaxElementId) mMaxElementId = Id;
                }

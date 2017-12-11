@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(nwIntend);
             }
         });
+    }
 
+    private UNIFrame createUNIFrame()
+    {
+        UNIFrame uniFrame = new UNIFrame();
+
+
+
+        return uniFrame;
     }
 }

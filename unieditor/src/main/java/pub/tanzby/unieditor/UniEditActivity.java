@@ -287,6 +287,7 @@ public class UniEditActivity extends AppCompatActivity
         });
     }
 
+    // TODO: 修改成由通知来设置menu
     private void setMenu(Context context)
     {
         UNIElementView ansU = new UNIElementView(context);
@@ -299,7 +300,7 @@ public class UniEditActivity extends AppCompatActivity
         ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.ic_border_color_grey_400_24dp));
         u.add(ansU);
 
-        mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,u);
+        mAdapter = new UNIMenuElementAdapter<>(context,u);
 
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
         rv.setLayoutManager(new GridLayoutManager(context,4));

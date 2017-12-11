@@ -41,15 +41,15 @@ public class Property
 
     public Property(int width, int height, int x, int y)
     {
-        this(width, height, x, y, 1.0f, Mode.Linear);
+        this(width, height, x, y, 1.0f, 0, Mode.Linear);
     }
 
-    public Property(int width, int height, int x, int y, float opacity, Mode mode)
+    public Property(int width, int height, int x, int y, float opacity, float rotation, Mode mode)
     {
-        this(getIDCursor(), width, height, x, y, opacity, mode);
+        this(getIDCursor(), width, height, x, y, opacity, rotation, mode);
     }
 
-    public Property(int ID, int width, int height, int x, int y, float opacity, Mode mode)
+    public Property(int ID, int width, int height, int x, int y, float opacity, float rotation, Mode mode)
     {
         this.ID = ID;
         this.width = width;
@@ -58,6 +58,7 @@ public class Property
         this.y = y;
         this.opacity = opacity;
         this.mode = mode;
+        this.rotation = rotation;
     }
     //endregion
 
@@ -69,7 +70,7 @@ public class Property
     public int height;
     public float opacity;
     public Mode mode;
-    public String url;
+    public float rotation;
     //endregion
 
     //region 工具函数

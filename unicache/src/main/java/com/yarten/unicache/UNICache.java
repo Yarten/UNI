@@ -3,6 +3,7 @@ package com.yarten.unicache;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
 import com.uni.utils.CAN;
+import com.uni.utils.FrameProperty;
 import com.uni.utils.Property;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,7 +35,12 @@ public class UNICache
         frames.clear();
     }
 
-    public void addFrame(int ID)
+    public void updateFrame(int ID, FrameProperty property)
+    {
+        frames.get(ID).frameProperty = property.clone();
+    }
+
+    public void addFrame(int ID, FrameProperty property)
     {
         KeyFrame keyFrame;
 
@@ -42,17 +48,34 @@ public class UNICache
             keyFrame = frames.get(ID-1).clone();
         else keyFrame = new KeyFrame();
 
+        keyFrame.frameProperty = property;
+        int size = frames.size();
+        if(ID == size)
+        {
+            if(size != 0) frames.get(size-1).frameProperty.hasNext = true;
+            keyFrame.frameProperty.hasNext = false;
+        }
+
         frames.add(ID, keyFrame);
     }
 
     public void deleteFrame(int ID)
     {
+        int size = frames.size();
+        if(ID == size-1)
+        {
+            frames.get(ID-1).frameProperty.hasNext = false;
+        }
+
         frames.remove(ID);
     }
 
-    public void updateFrame(int ID)
+    public void getFrame(int ID)
     {
-        if(frames.size() == 0) addFrame(ID);
+        if(frames.size() == 0)
+        {
+            addFrame(ID, new FrameProperty(0));
+        }
 
         KeyFrame keyFrame = frames.get(ID);
 
@@ -68,13 +91,13 @@ public class UNICache
             images.put(id, element.image);
         }
 
-        CAN.DataBus.updateEditor(props, images, ID != frames.size()-1);
+        CAN.DataBus.updateEditor(props, images, keyFrame.frameProperty);
     }
 
-    public void addElement(int where, int ID, Property property, Bitmap image)
+    public void addElement(int where, int ID, Property property, Bitmap image, String url)
     {
         for(int i = where, size = frames.size(); i < size; i++)
-            frames.get(i).add(ID, property, image);
+            frames.get(i).add(ID, property, image, url);
     }
 
     public void deleteElement(int where, int ID)
@@ -103,7 +126,7 @@ public class UNICache
                 updateElement(pkg.where, pkg.which, pkg.how);
                 break;
             case Add:
-                addElement(pkg.where, pkg.which, pkg.how, pkg.image);
+                addElement(pkg.where, pkg.which, pkg.how, pkg.image, pkg.url);
                 break;
             case Delete:
                 deleteElement(pkg.where, pkg.which);
@@ -117,13 +140,16 @@ public class UNICache
         switch (pkg.what)
         {
             case Update:
-                updateFrame(pkg.which);
+                updateFrame(pkg.which, pkg.how);
                 break;
             case Add:
-                addFrame(pkg.which);
+                addFrame(pkg.which, new FrameProperty(pkg.which));
                 break;
             case Delete:
-                addFrame(pkg.which);
+                deleteFrame(pkg.which);
+                break;
+            case Get:
+                getFrame(pkg.which);
                 break;
         }
     }

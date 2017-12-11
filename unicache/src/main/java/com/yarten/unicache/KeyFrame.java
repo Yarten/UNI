@@ -3,6 +3,7 @@ package com.yarten.unicache;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
 
+import com.uni.utils.FrameProperty;
 import com.uni.utils.Property;
 
 import java.net.Inet4Address;
@@ -19,31 +20,35 @@ class KeyFrame
     {
         Element()
         {
-            this(null, null);
+            this(null, null, null);
         }
 
-        Element(Property property, Bitmap image)
+        Element(Property property, Bitmap image, String url)
         {
             this.image = image;
             this.property = property;
+            this.url = url;
         }
 
         public Element clone()
         {
-            Element r = new Element(property.clone(), image);
+            Element r = new Element(property.clone(), image, url);
             return r;
         }
 
 
         Bitmap image;
         Property property;
+        String url;
     }
 
     SparseArray<Element> elements = new SparseArray<>();
 
-    public void add(int ID, Property property, Bitmap bitmap)
+    FrameProperty frameProperty = null;
+
+    public void add(int ID, Property property, Bitmap bitmap, String url)
     {
-        Element element = new Element(property, bitmap);
+        Element element = new Element(property, bitmap, url);
         elements.put(ID, element);
     }
 
@@ -72,6 +77,8 @@ class KeyFrame
             Element element = elements.valueAt(i).clone();
             r.elements.put(key, element);
         }
+
+        r.frameProperty = frameProperty.clone();
 
         return r;
     }

@@ -38,7 +38,7 @@ public class CAN
         {
             public SparseArray<Property> props;
             public SparseArray<Bitmap> images;
-            public boolean hasNext;
+            public FrameProperty frameProperty;
         }
 
         /**
@@ -52,11 +52,12 @@ public class CAN
         {
             public enum Type
             {
-                Update, Add, Delete
+                Update, Add, Delete, Get
             }
 
             public Type what;
             public Integer which;
+            public FrameProperty how;
         }
 
         /**
@@ -76,6 +77,7 @@ public class CAN
             public Integer which;
             public Property how;
             public Bitmap image;
+            public String url;
         }
     }
 
@@ -92,14 +94,15 @@ public class CAN
          * TODO: 目前还没有考虑帧本身的数据（间隔、持续时间、作者、哪些元素不可修改等）
          * @param props 帧中各个元素的属性
          * @param images 帧中各个元素的截图
+         * @param frameProperty 帧的属性（包括是否有下一帧等）
          */
-        public static void updateEditor(SparseArray<Property> props, SparseArray<Bitmap> images, boolean hasNext)
+        public static void updateEditor(SparseArray<Property> props, SparseArray<Bitmap> images, FrameProperty frameProperty)
         {
             Package.EditorUpdate pkg = new Package.EditorUpdate();
             pkg.props = props;
             pkg.images = images;
-            pkg.hasNext = hasNext;
-            EventBus.getDefault().post(pkg);
+            pkg.frameProperty = frameProperty;
+            CAN.send(pkg);
         }
 
         /**
@@ -111,9 +114,9 @@ public class CAN
         public static void requireUpdate(Integer frameID)
         {
             Package.FrameRequest pkg = new Package.FrameRequest();
-            pkg.what = Package.FrameRequest.Type.Update;
+            pkg.what = Package.FrameRequest.Type.Get;
             pkg.which = frameID;
-            EventBus.getDefault().post(pkg);
+            CAN.send(pkg);
         }
 
         /**
@@ -127,12 +130,12 @@ public class CAN
             Package.FrameRequest pkg = new Package.FrameRequest();
             pkg.what = Package.FrameRequest.Type.Add;
             pkg.which = where;
-            EventBus.getDefault().post(pkg);
+            CAN.send(pkg);
         }
 
         /**
          * UNIEditor要求UNICache删除指定帧。<br>
-         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(SparseArray, SparseArray, boolean)}，<br>
+         * 建议：如果删除的是当前帧，UNICache自动调用{@link DataBus#updateEditor(SparseArray, SparseArray, FrameProperty)}，<br>
          * 或者UNIEditor调用{@link DataBus#requireUpdate(Integer)}。<br>
          *
          * 用到的包：{@link Package.FrameRequest}
@@ -143,7 +146,21 @@ public class CAN
             Package.FrameRequest pkg = new Package.FrameRequest();
             pkg.what = Package.FrameRequest.Type.Delete;
             pkg.which = frameID;
-            EventBus.getDefault().post(pkg);
+            CAN.send(pkg);
+        }
+
+        /**
+         * 更新帧的信息（包括帧与上一帧的间隔、在当前帧的停留时间）
+         * @param frameID
+         * @param property 帧的属性
+         */
+        public static void updateFrame(Integer frameID, FrameProperty property)
+        {
+            Package.FrameRequest pkg = new Package.FrameRequest();
+            pkg.what = Package.FrameRequest.Type.Update;
+            pkg.which = frameID;
+            pkg.how = property;
+            CAN.send(pkg);
         }
 
         /**
@@ -158,7 +175,7 @@ public class CAN
             pkg.what = Package.ElementRequest.Type.Delete;
             pkg.where = frameID;
             pkg.which = elementID;
-            EventBus.getDefault().post(pkg);
+            CAN.send(pkg);
         }
 
 
@@ -169,8 +186,9 @@ public class CAN
          * @param frameID 元素所在的帧的ID（请不要超过当前帧的数量，或者注意及时更新！）
          * @param prop 元素在该帧的属性
          * @param image 元素的缩略图
+         * @param url 元素的全球唯一标识符
          */
-        public static void addElement(Integer frameID, Property prop, Bitmap image)
+        public static void addElement(Integer frameID, Property prop, Bitmap image, String url)
         {
             Package.ElementRequest pkg = new Package.ElementRequest();
             pkg.what = Package.ElementRequest.Type.Add;
@@ -178,7 +196,8 @@ public class CAN
             pkg.which = prop.ID;
             pkg.how = prop;
             pkg.image = image;
-            EventBus.getDefault().post(pkg);
+            pkg.url = url;
+            CAN.send(pkg);
         }
 
 
@@ -189,7 +208,7 @@ public class CAN
             pkg.where = frameID;
             pkg.which = prop.ID;
             pkg.how = prop;
-            EventBus.getDefault().post(pkg);
+            CAN.send(pkg);
         }
     }
 
@@ -214,5 +233,10 @@ public class CAN
     public static void logout(Object who)
     {
         EventBus.getDefault().unregister(who);
+    }
+    
+    public static void send(Object pkg)
+    {
+        EventBus.getDefault().post(pkg);
     }
 }

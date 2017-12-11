@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/unicache/unicache.iml" filepath="$PROJECT_DIR$/unicache/unicache.iml" />
       <module fileurl="file://$PROJECT_DIR$/unieditor/unieditor.iml" filepath="$PROJECT_DIR$/unieditor/unieditor.iml" />
-      <module fileurl="file://D:\Project\Android\UNI_Project\UNI\unieditor\unieditor.iml" filepath="D:\Project\Android\UNI_Project\UNI\unieditor\unieditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/unimanager/unimanager.iml" filepath="$PROJECT_DIR$/unimanager/unimanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/uniplayer/uniplayer.iml" filepath="$PROJECT_DIR$/uniplayer/uniplayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />

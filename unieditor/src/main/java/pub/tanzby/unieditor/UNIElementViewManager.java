@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.uni.utils.CAN;
+import com.uni.utils.FrameProperty;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -272,7 +274,7 @@ public class UNIElementViewManager {
 
             current_added_element.add(mUniViewItem);
             mCanvans.addView(mUniViewItem);
-            CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb);
+            CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb, mUniViewItem.mUrl);
         }
         current_waiting_added_element.clear();
     }
@@ -386,7 +388,9 @@ public class UNIElementViewManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateCanvas(CAN.Package.EditorUpdate pkg)
     {
-        hasNext = pkg.hasNext;
+        FrameProperty frameProperty = pkg.frameProperty;
+        // TODO: 加上帧的另外两个属性的设置：与上一帧的距离，当前帧的停留时间。
+        hasNext = frameProperty.hasNext;
         //更新按钮
 
         if ( bnt_ctrl_next!=null){

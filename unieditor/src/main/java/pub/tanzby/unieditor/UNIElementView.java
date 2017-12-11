@@ -18,6 +18,7 @@ public class UNIElementView extends AppCompatImageView {
     Property mProperty;
     Boolean  hasAddedToCavans;
     Bitmap   mThumb;
+    String mUrl;
 
     static int DEFAULT_WIDTH = 50;
     static String TAG = "UNIElementView";
@@ -97,7 +98,6 @@ public class UNIElementView extends AppCompatImageView {
         super.scrollTo(x, y);
         setVisibility(VISIBLE);
         updatePropoty();
-
     }
 
     @Override
@@ -115,7 +115,7 @@ public class UNIElementView extends AppCompatImageView {
     @Override
     public void setRotation(float rotation) {
         super.setRotation(rotation);
-        // TODO
+        mProperty.rotation = rotation;
     }
 
     @Override
