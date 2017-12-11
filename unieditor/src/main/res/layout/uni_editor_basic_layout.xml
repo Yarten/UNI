@@ -51,7 +51,7 @@
             android:layout_alignParentTop="true"
             android:background="#eee"
             android:shadowRadius="5"
-            android:text="P/IN"
+            android:text="PLAY"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
             app:layout_constraintEnd_toStartOf="@+id/bnt_editor_next"
@@ -75,14 +75,38 @@
             android:id="@+id/bnt_editor_save"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:layout_marginEnd="8dp"
             android:background="#eee"
             android:shadowRadius="5"
             android:text="SAVE"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_delete"
             app:layout_constraintStart_toEndOf="@+id/bnt_editor_next" />
+
+        <Button
+            android:id="@+id/bnt_editor_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="#eee"
+            android:shadowRadius="5"
+            android:text="DELE"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_add"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_save"
+            tools:layout_editor_absoluteY="317dp" />
+
+        <Button
+            android:id="@+id/bnt_editor_add"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginEnd="8dp"
+            android:background="#eee"
+            android:shadowRadius="5"
+            android:text="ADD"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete"
+            tools:layout_editor_absoluteY="317dp" />
 
         <Button
 

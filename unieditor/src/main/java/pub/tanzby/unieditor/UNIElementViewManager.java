@@ -106,7 +106,7 @@ public class UNIElementViewManager {
      * @param prev 用于执行 "上一帧" 的 按钮
      */
     public void setCtrlButtonGroup(@NonNull Button play,
-                                   @NonNull final Button next,
+                                   @NonNull Button next,
                                    @NonNull Button prev,
                                    @NonNull Button save,
                                    @NonNull Button dele,
