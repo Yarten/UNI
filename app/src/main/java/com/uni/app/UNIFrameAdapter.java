@@ -2,6 +2,8 @@ package com.uni.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.uni.uniplayer.UNIFrame;
 import com.uni.uniplayer.UNIView;
+import com.uni.utils.Brief;
+import com.uni.utils.CAN;
+import com.yarten.unimanager.UNIManager;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
 import java.util.List;
 
 /**
@@ -23,15 +33,41 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
 
     List<E> mList;
     Context mContext;
+    UpdateHandler mHandler;
 
     public UNIFrameAdapter(Context context){
         mList = null;
         mContext = context;
+        mHandler = new UpdateHandler();
     }
 
     public UNIFrameAdapter(Context context,List<E> list_){
         mList = list_;
         mContext = context;
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void updateMainMenu(CAN.Package.Menu.Reply pkg)
+    {
+        List<Brief> items = pkg.items;
+
+        // TODO: 临时的操作：直接在这里加载UNIFrame
+        for(Brief item : items)
+        {
+            File dir = mContext.getDir(mContext.getCacheDir() + "/" + item.title, Context.MODE_PRIVATE);
+            UNIFrame uniFrame = UNIManager.instance.getUNIFrame(dir, item.title);
+            mList.add((E)uniFrame);
+        }
+
+        mHandler.sendEmptyMessage(0);
+    }
+
+    class UpdateHandler extends Handler
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            notifyDataSetChanged();
+        }
     }
 
 
@@ -46,6 +82,7 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         holder.title.setText(mList.get(position).toString());
+        holder.uniView.setUNIFrame((UNIFrame) mList.get(position));
 
 
         if (mOnItemClickLitener != null) {

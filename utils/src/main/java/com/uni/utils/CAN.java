@@ -313,6 +313,14 @@ public class CAN
             pkg.startFrom = startFrom;
             CAN.send(pkg);
         }
+
+        public static void updateMainMenu(List<Brief> items)
+        {
+            Package.Menu.Reply pkg = new Package.Menu.Reply();
+            pkg.what = Package.Menu.Type.MainMenu;
+            pkg.items = items;
+            CAN.send(pkg);
+        }
     }
 
     /**

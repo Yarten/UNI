@@ -64,10 +64,13 @@ public class UNIManager
         super.finalize();
     }
 
-    public boolean loadFromCache(String yaml, boolean editMode)
+    public UNIFrame getUNIFrame(File dir, String name)
     {
-        return loadYaml(context.getCacheDir(), yaml, editMode);
+        if(!loadYaml(dir, name + ".yaml", false))
+            return null;
+        return uniFrame;
     }
+
 
     public boolean loadYaml(File dir, String yaml, boolean editMode)
     {
@@ -160,21 +163,9 @@ public class UNIManager
 
     public void updateMainMenu()
     {
-        File root = context.getFilesDir();
-        File[] dirs = root.listFiles();
-
-        for(File dir : dirs)
-        {
-            // UNI
-            if(dir.isDirectory())
-            {
-                String name = dir.getName();
-
-            }
-        }
+        List<Brief> items = frameManager.getFrames();
+        CAN.Control.updateMainMenu(items);
     }
-
-
 
     public void updateElementMenu(CAN.Package.Menu.Type from)
     {
@@ -198,6 +189,8 @@ public class UNIManager
             case Save:
                 // TODO: 根据用户名字存放，并最后上交给服务器，现在全放在cache
                 saveUNIFrame(context.getCacheDir(), pkg.brief);
+                // TODO: 临时的处理：刷新主界面
+                updateMainMenu();
                 break;
         }
     }
