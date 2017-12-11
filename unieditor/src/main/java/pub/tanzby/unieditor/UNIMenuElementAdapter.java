@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.uni.utils.Brief;
+import com.uni.utils.GraphicsTools;
+import com.uni.utils.Permission;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,6 +42,12 @@ public class UNIMenuElementAdapter<E> extends RecyclerView.Adapter<UNIMenuElemen
         return h;
     }
 
+    public void updateList( List<E> itemList)
+    {
+        this.itemList = itemList;
+        notifyDataSetChanged();
+    }
+
     public void update(List<Brief> items)
     {
         int size = items.size();
@@ -47,19 +55,21 @@ public class UNIMenuElementAdapter<E> extends RecyclerView.Adapter<UNIMenuElemen
 
         for(int i = 0; i < size; i++)
         {
-            UNIElementView item = (UNIElementView) itemList.get(i);
+            UNIElementView item = new UNIElementView(mContext);
             Brief brief = items.get(i);
             item.setURL(brief.url);
             item.setImageBitmap(brief.thumb);
+            itemList.add((E)item);
         }
 
-        notify();
+        notifyDataSetChanged();
+
     }
 
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         UNIElementView ansView = (UNIElementView) itemList.get(position);
-//        holder.Description_name.setText("A");
+        holder.Description_name.setText(ansView.mUrl);
         holder.ThumbNail.setImageBitmap(ansView.mThumb);
 
         if (mOnItemClickLitener != null) {

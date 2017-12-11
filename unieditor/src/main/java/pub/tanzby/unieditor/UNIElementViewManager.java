@@ -143,21 +143,21 @@ public class UNIElementViewManager {
             }
         });
 
-        bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
+    /*    bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"insert",Toast.LENGTH_SHORT).show();
                 requestNewFrame();
             }
-        });
+        });*/
 
-        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
+/*        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"delete",Toast.LENGTH_SHORT).show();
                 deleteCurrentFrame();
             }
-        });
+        });*/
 
         bnt_ctrl_save.setOnClickListener(new View.OnClickListener() {
             private EditText edit = new EditText(mContext);

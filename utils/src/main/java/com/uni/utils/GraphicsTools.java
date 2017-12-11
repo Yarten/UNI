@@ -64,7 +64,8 @@ public class GraphicsTools {
     public static boolean saveToLocal(File dir, String name, Bitmap image)
     {
         File file = new File(dir, name + ".png");
-        if(file.exists()) file.delete();
+        if(file.exists())
+            file.delete();
         else try
         {
             file.createNewFile();

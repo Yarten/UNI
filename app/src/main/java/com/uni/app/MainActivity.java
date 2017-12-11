@@ -16,8 +16,10 @@ import com.stone.vega.library.VegaLayoutManager;
 import com.uni.uniplayer.UNIFrame;
 import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
+import com.uni.utils.FileUtils;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.GraphicsTools.statusBar;
+import com.uni.utils.Permission;
 import com.uni.utils.Property;
 import com.yarten.unimanager.UNIManager;
 
@@ -39,16 +41,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        makeSomeNoise();
+        Permission.verifyExternalStoragePermissions(this);
         init();
         evenbing();
+        makeSomeNoise();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     private void init()
     {
@@ -160,11 +158,12 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i = 0; i < elements.length; i++)
         {
-            File root = getDir("files/" + elements[i].name, MODE_PRIVATE);
-            File imageDir = getDir("files/" + elements[i].name + "/Images", MODE_PRIVATE);
+            File root = FileUtils.instance.getFileDir(elements[i].name);
+            File imageDir = FileUtils.instance.getFileDir(elements[i].name + "/Images");
+
             Bitmap image = BitmapFactory.decodeResource(resources, elements[i].sourceID);
             GraphicsTools.saveToLocal(imageDir, elements[i].name, image);
-            GraphicsTools.saveToLocal(root, "thumb.png", image);
+            GraphicsTools.saveToLocal(root, "thumb", image);
 
             YAMLParser parser = new YAMLParser(root, elements[i].name + ".yaml");
             parser.setBrief("AA", "BB", "12-11", "System/" + elements[i].name, "Demo");

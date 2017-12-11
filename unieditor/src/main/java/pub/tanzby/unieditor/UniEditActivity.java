@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.GraphicsTools;
 
@@ -80,7 +81,6 @@ public class UniEditActivity extends AppCompatActivity
     boolean isDrawerOpen;
 
     UNIMenuElementAdapter mAdapter;
-    List<UNIElementView> u = new ArrayList<>();
 
     private final String TAG = "EDITOR";
 
@@ -126,6 +126,7 @@ public class UniEditActivity extends AppCompatActivity
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
 
         ROOT.setScrimColor(Color.TRANSPARENT);
+        CAN.login(this);
     }
 
 
@@ -298,8 +299,8 @@ public class UniEditActivity extends AppCompatActivity
     // TODO: 修改成由通知来设置menu
     private void setMenu(Context context)
     {
-        UNIElementView ansU;
 
+/*
         ansU = new UNIElementView(context);
         ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.people));
         u.add(ansU);
@@ -332,11 +333,9 @@ public class UniEditActivity extends AppCompatActivity
         ansU = new UNIElementView(context);
         ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog4));
         u.add(ansU);
+*/
 
-
-
-
-        mAdapter = new UNIMenuElementAdapter<>(context,u);
+        mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,null);
 
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
         rv.setLayoutManager(new GridLayoutManager(context,3));
@@ -404,5 +403,6 @@ public class UniEditActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        CAN.logout(this);
     }
 }

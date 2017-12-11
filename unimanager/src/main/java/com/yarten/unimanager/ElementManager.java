@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.example.vincent.yamlparser.YAMLParser;
 import com.uni.uniplayer.UNIElement;
 import com.uni.utils.Brief;
+import com.uni.utils.FileUtils;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.Property;
@@ -108,7 +109,7 @@ class ElementManager
         if(!yaml.loadYAML()) return null;
 
         Brief brief = yaml.getBrief();
-        brief.thumb = GraphicsTools.loadFromLocal(path.dir, "thumb.png");
+        brief.thumb = GraphicsTools.loadFromLocal(path.dir, "thumb");
 
         cache.put(url, brief);
 
@@ -127,14 +128,14 @@ class ElementManager
         if(source.equals("System"))
         {
             // TODO: 从 /Files/DB 搜索是否存在该UNI元素，存在则加载
-            path.dir = context.getDir("files/" + name, Context.MODE_PRIVATE);
+            path.dir = FileUtils.instance.getFileDir(name);
             path.name = name;
             return path;
         }
         else if(source.equals("Image"))
         {
             // 加载UNI元素局部路径文件夹的原子图像。
-            path.name = "Images/" + name + ".png";
+            path.name = "Images/" + name;
             return path;
         }
         else

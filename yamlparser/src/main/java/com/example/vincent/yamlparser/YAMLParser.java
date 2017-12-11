@@ -238,8 +238,8 @@ public class YAMLParser {
            for(String key: Frames.keySet()){
                Map<String, Object> frame = (Map<String, Object>) Frames.get(key);
                int Id = (Integer) frame.get("Id");
-               long duration = (Long) frame.get("duration");
-               long interval =  (Long) frame.get("interval");
+               long duration = (Integer) frame.get("duration");
+               long interval =  (Integer) frame.get("interval");
                mFrames.add(new FrameProperty(Id, duration, interval));
            }
 
