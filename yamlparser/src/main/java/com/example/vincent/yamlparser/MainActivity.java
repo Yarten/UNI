@@ -27,44 +27,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
 
-        List<String> lists = new ArrayList<>();
-        List<Integer> icons = new ArrayList<>();
-        lists.add("面对面快传");
-        icons.add(R.mipmap.back);
-        lists.add("付款");
-        icons.add(R.mipmap.back);
-        lists.add("拍摄");
-        icons.add(R.mipmap.back);
 
-        MenuButton menuButton = findViewById(R.id.menu_button);
-        menuButton.setLists(lists);
-        menuButton.setIcons(icons);
-        menuButton.setOnItemClickListener(new MenuButton.OnItemClickListener() {
-            @Override
-            public void onNextButtonClick() {
-                Toast.makeText(MainActivity.this, "You've clicked  Next", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onMenuItemClick(int position) {
-                switch (position){
-                    case 0:
-                        Toast.makeText(MainActivity.this, "You've clicked  0", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        Toast.makeText(MainActivity.this, "You've clicked  1", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        Toast.makeText(MainActivity.this, "You've clicked  2", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-
-            @Override
-            public void onPrevButtonClick() {
-                Toast.makeText(MainActivity.this, "You've clicked  Prev", Toast.LENGTH_SHORT).show();
-            }
-        });
 //        YAMLParser parser = new YAMLParser(getFilesDir(), "test.yml");
 //        parser.setBrief("vincent", "student", "12-11", "parser-url", "Test");
 //        Property p1 = new Property(1);

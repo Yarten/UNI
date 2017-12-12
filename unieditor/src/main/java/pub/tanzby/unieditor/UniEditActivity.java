@@ -22,10 +22,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.GraphicsTools;
+import com.uni.utils.MenuButton.MenuButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -131,6 +133,49 @@ public class UniEditActivity extends AppCompatActivity
 
         ROOT.setScrimColor(Color.TRANSPARENT);
         CAN.login(this);
+
+
+
+        List<String> lists = new ArrayList<>();
+        List<Integer> icons = new ArrayList<>();
+        lists.add("SAVE");
+        icons.add(R.mipmap.back);
+        lists.add("DELETE");
+        icons.add(R.mipmap.back);
+        lists.add("PLAY");
+        icons.add(R.mipmap.back);
+
+        MenuButton menuButton = findViewById(R.id.uniEditor_layout_menu);
+
+        menuButton.setLists(lists);
+        menuButton.setIcons(icons);
+        menuButton.setOnItemClickListener(new MenuButton.OnItemClickListener() {
+            @Override
+            public void onNextButtonClick() {
+                Toast.makeText(UniEditActivity.this, "You've clicked  Next", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMenuItemClick(int position) {
+                switch (position){
+                    case 0:
+                        Toast.makeText(UniEditActivity.this, "You've clicked  0", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        Toast.makeText(UniEditActivity.this, "You've clicked  1", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        Toast.makeText(UniEditActivity.this, "You've clicked  2", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPrevButtonClick() {
+                Toast.makeText(UniEditActivity.this, "You've clicked  Prev", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 
@@ -180,6 +225,8 @@ public class UniEditActivity extends AppCompatActivity
                 return false;
             }
         });
+
+
 
 
         MAINContent.setOnTouchListener(this);

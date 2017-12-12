@@ -1,10 +1,13 @@
 package com.uni.utils.MenuButton;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 import com.uni.utils.R;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +29,7 @@ import java.util.List;
  * Created by D105-01 on 2017/12/11.
  */
 
-public class MenuButton extends LinearLayout implements View.OnTouchListener{
+public class MenuButton extends LinearLayout implements View.OnTouchListener, View.OnLongClickListener{
 
     int lastX,lastY;
     @Override
@@ -37,6 +41,8 @@ public class MenuButton extends LinearLayout implements View.OnTouchListener{
             case MotionEvent.ACTION_DOWN:
                 lastX = rawX;
                 lastY = rawY;
+
+                Log.i("MENU","DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
 
@@ -47,11 +53,20 @@ public class MenuButton extends LinearLayout implements View.OnTouchListener{
 
                 lastX = rawX;
                 lastY = rawY;
+                Log.i("MENU","MOVE");
 
-                return true;
+                break;
             case MotionEvent.ACTION_UP:
+                Log.i("MENU","UP");
                 break;
         }
+        return true;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        ClipData data = ClipData.newPlainText("","");
+        v.startDrag(data,new DragShadowBuilder(v),null,0);
         return false;
     }
 
@@ -104,6 +119,9 @@ public class MenuButton extends LinearLayout implements View.OnTouchListener{
                 onItemClickListener.onPrevButtonClick();
             }
         });
+
+        ((ConstraintLayout)btn_prev.getParent()).setOnTouchListener(this);
+
     }
 
     public void setLists(List<String> lists){
