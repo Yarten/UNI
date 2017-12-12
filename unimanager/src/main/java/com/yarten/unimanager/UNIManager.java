@@ -147,7 +147,7 @@ public class UNIManager
         }
 
         yaml.saveYAML();
-        GraphicsTools.saveToLocal(dir, "thumb.png", brief.thumb);
+        GraphicsTools.saveToLocal(dir, "thumb", brief.thumb);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)

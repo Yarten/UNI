@@ -43,6 +43,7 @@ public class UniEditActivity extends AppCompatActivity
         ScaleGestureDetector.OnScaleGestureListener
 
 {
+    //region 成员
     /*
      * 视图元素
      */
@@ -83,6 +84,7 @@ public class UniEditActivity extends AppCompatActivity
     UNIMenuElementAdapter mAdapter;
 
     private final String TAG = "EDITOR";
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,7 @@ public class UniEditActivity extends AppCompatActivity
 
         setMenu(this);
         CAN.DataBus.requireMenu(10, 0);
-
+        CAN.DataBus.requireUpdate(0);
         mainEvenBinding();
     }
 
@@ -298,45 +300,9 @@ public class UniEditActivity extends AppCompatActivity
         });
     }
 
-    // TODO: 修改成由通知来设置menu
+    // 初始化Menu
     private void setMenu(Context context)
     {
-
-/*
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.people));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.low));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.clound));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog2));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.high));
-        u.add(ansU);
-
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog3));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog4));
-        u.add(ansU);
-*/
-
         mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,null);
 
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
@@ -379,7 +345,6 @@ public class UniEditActivity extends AppCompatActivity
         boolean mScaleGes =mScaleGestureDetector.onTouchEvent(event);
         return mScaleGes;
     }
-
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {

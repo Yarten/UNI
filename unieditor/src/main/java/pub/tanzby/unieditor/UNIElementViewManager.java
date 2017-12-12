@@ -148,21 +148,21 @@ public class UNIElementViewManager {
             }
         });
 
-    /*    bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
+        bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"insert",Toast.LENGTH_SHORT).show();
                 requestNewFrame();
             }
-        });*/
+        });
 
-/*        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
+        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"delete",Toast.LENGTH_SHORT).show();
                 deleteCurrentFrame();
             }
-        });*/
+        });
 
         bnt_ctrl_save.setOnClickListener(new View.OnClickListener() {
             private EditText edit = new EditText(mContext);
@@ -309,10 +309,11 @@ public class UNIElementViewManager {
     {
         for (UNIElementView ori: current_waiting_added_element)
         {
-            UNIElementView mUniViewItem = new UNIElementView(mContext);
+            UNIElementView mUniViewItem = ori.clone(mContext);
+                    //new UNIElementView(mContext);
 
             mUniViewItem.setPositionTo(x,y); // TODO batch 添加时应该区别最终位置
-            mUniViewItem.setImageBitmap(ori.mThumb);
+         //   mUniViewItem.setImageBitmap(ori.mThumb);
 
 
             // 为每一个添加到cavans 的元素

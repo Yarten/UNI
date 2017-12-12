@@ -48,7 +48,7 @@ public class UNIElementView extends AppCompatImageView {
 
     }
 
-    public void setPropertyAndBitmap(Property prop,Bitmap thumb)
+    public void setPropertyAndBitmap(Property prop, Bitmap thumb)
     {
         if (this.getParent() == null){
             Log.i(TAG+" reflashProperty"," 未添加到画板");
@@ -131,4 +131,14 @@ public class UNIElementView extends AppCompatImageView {
         setMinimumWidth(mini);
         super.onAttachedToWindow();
     }
+
+    public UNIElementView clone(Context context)
+    {
+        UNIElementView copy = new UNIElementView(context);
+        copy.setImageBitmap(mThumb);
+        copy.setURL(mUrl);
+        copy.mProperty = mProperty;
+        return copy;
+    }
+
 }

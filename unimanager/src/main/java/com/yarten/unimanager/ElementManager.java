@@ -2,6 +2,7 @@ package com.yarten.unimanager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.vincent.yamlparser.YAMLParser;
 import com.uni.uniplayer.UNIElement;
@@ -110,7 +111,9 @@ class ElementManager
 
         Brief brief = yaml.getBrief();
         brief.thumb = GraphicsTools.loadFromLocal(path.dir, "thumb");
-
+        if(brief.thumb == null)
+            Log.e("Element", "NULL");
+        else Log.i("Element", "GOOD");
         cache.put(url, brief);
 
         return brief;
