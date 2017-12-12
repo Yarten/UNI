@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,7 +25,35 @@ import java.util.List;
  * Created by D105-01 on 2017/12/11.
  */
 
-public class MenuButton extends LinearLayout {
+public class MenuButton extends LinearLayout implements View.OnTouchListener{
+
+    int lastX,lastY;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int rawX = (int) event.getRawX();
+        int rawY = (int) event.getRawY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = rawX;
+                lastY = rawY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                int offsetX = rawX - lastX;
+                int offsetY = rawY - lastY;
+
+                scrollBy(-offsetX, -offsetY);
+
+                lastX = rawX;
+                lastY = rawY;
+
+                return true;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return false;
+    }
 
     public interface OnItemClickListener{
         void onNextButtonClick();
@@ -112,7 +141,6 @@ public class MenuButton extends LinearLayout {
                     public void onBindView(BaseViewHolder holder, int position) {
                         TextView tv = holder.getView(R.id.item_add);
                         tv.setText(mLists.get(position));
-//                        tv.setCompoundDrawablesWithIntrinsicBounds(mIcons.get(position), 0, 0, 0);
 
                         if (position == mLists.size() - 1) {
                             holder.setVisibility(R.id.item_line, BaseViewHolder.GONE);
@@ -134,7 +162,6 @@ public class MenuButton extends LinearLayout {
 
                     @Override
                     public void onItemClick(View v, int position) {
-                        //Toast.makeText(MainActivity.this, "你点击了:" + position, Toast.LENGTH_SHORT).show();
                         onItemClickListener.onMenuItemClick(position);
                     }
 

@@ -51,5 +51,4 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
 
-
 }
