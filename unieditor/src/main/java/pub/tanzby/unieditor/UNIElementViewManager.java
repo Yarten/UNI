@@ -184,15 +184,15 @@ public class UNIElementViewManager {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (true){
-                            saveCavans();
+                        if (!edit.getText().toString().isEmpty()){
+                            saveCavans(); // 保存全部
                             Brief b = new Brief();
                             b.title = edit.getText().toString();
                             b.thumb = GraphicsTools.getShotCut(mCanvans);
                             CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
                         }
                         else {
-                            edit.setError("输入错误");
+                            edit.setError("不能为空");
                         }
                     }
                 });
@@ -381,9 +381,11 @@ public class UNIElementViewManager {
     public void requestPrevFrame()
     {
         if (frameID > 0)
+        {
+            forbidAllBotton();
             frameID--;
             CAN.DataBus.requireUpdate(frameID);
-        forbidAllBotton();
+        }
     }
 
     /**
@@ -392,10 +394,10 @@ public class UNIElementViewManager {
     public void requestNextFrame()
     {
         if (hasNext) {
+            forbidAllBotton();
             frameID++;
             CAN.DataBus.requireUpdate(frameID);
         }
-        forbidAllBotton();
     }
 
     /**
@@ -404,11 +406,12 @@ public class UNIElementViewManager {
      */
     public void requestNewFrame()
     {
+        forbidAllBotton();
         // 通知服务
         CAN.DataBus.addFrame(frameID);
         frameID ++;
         resetCavans();
-        forbidAllBotton();
+
     }
 
     /**
@@ -416,7 +419,7 @@ public class UNIElementViewManager {
      */
     public void deleteCurrentFrame()
     {
-
+        forbidAllBotton();
         if (hasNext)  {
             CAN.DataBus.requireUpdate(frameID+1);
         }
@@ -426,8 +429,6 @@ public class UNIElementViewManager {
         }
         CAN.DataBus.deleteFrame(frameID);
 
-
-        forbidAllBotton();
     }
 
 
