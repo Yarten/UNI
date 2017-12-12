@@ -6,6 +6,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,6 +120,9 @@ public class UNIElementViewManager {
        bnt_ctrl_save=save;
        bnt_ctrl_dele=dele;
        bnt_ctrl_inse=inse;
+
+       forbidAllBotton();
+       updateAllBotton();
 
        bnt_ctrl_next.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -449,8 +454,69 @@ public class UNIElementViewManager {
         bnt_ctrl_prev.setClickable(false);
         bnt_ctrl_play.setClickable(false);
         bnt_ctrl_next.setClickable(false);
-        bnt_ctrl_prev.setText("");
-        bnt_ctrl_next.setText("");
+        bnt_ctrl_dele.setClickable(false);
+        bnt_ctrl_inse.setClickable(false);
+        bnt_ctrl_save.setClickable(false);
+
+        bnt_ctrl_prev.setTextColor(Color.GRAY);
+        bnt_ctrl_play.setTextColor(Color.GRAY);
+        bnt_ctrl_next.setTextColor(Color.GRAY);
+        bnt_ctrl_dele.setTextColor(Color.GRAY);
+        bnt_ctrl_inse.setTextColor(Color.GRAY);
+        bnt_ctrl_save.setTextColor(Color.GRAY);
+    }
+
+    /**
+     * 更新所有按钮的状态，只开不关
+     */
+    private void updateAllBotton()
+    {
+        if (bnt_ctrl_prev!=null)
+        {
+            if (frameID!= 0) {
+                bnt_ctrl_prev.setTextColor(Color.BLACK);
+                bnt_ctrl_prev.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_play!=null)
+        {
+            if (true) // TODO: 能播放的条件
+            {
+                bnt_ctrl_play.setTextColor(Color.BLACK);
+                bnt_ctrl_play.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_next!=null)
+        {
+            if (hasNext)
+            {
+                bnt_ctrl_next.setTextColor(Color.BLACK);
+                bnt_ctrl_next.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_save!=null)
+        {
+            if (true) // TODO: 能保存的条件
+            {
+                bnt_ctrl_save.setClickable(true);
+                bnt_ctrl_save.setTextColor(Color.BLACK);
+            }
+        }
+        if (bnt_ctrl_inse!=null) {
+            if (true) // TODO: 能插入的条件
+            {
+                bnt_ctrl_inse.setClickable(true);
+                bnt_ctrl_inse.setTextColor(Color.BLACK);
+            }
+        }
+        if (bnt_ctrl_dele!=null)
+        {
+            if (true) // TODO: 能删除的条件
+            {
+                bnt_ctrl_dele.setClickable(true);
+                bnt_ctrl_dele.setTextColor(Color.BLACK);
+            }
+        }
     }
 
 
@@ -466,33 +532,7 @@ public class UNIElementViewManager {
         hasNext = frameProperty.hasNext;
         //更新按钮
 
-        if ( bnt_ctrl_next!=null){
-            if (!hasNext) {
-                bnt_ctrl_next.setClickable(false);
-                bnt_ctrl_next.setText("ADD");
-            }
-            else {
-                bnt_ctrl_next.setClickable(true);
-                bnt_ctrl_next.setText("NEXT");
-            }
-        }
-
-        if (bnt_ctrl_prev!=null){
-            if (frameID==0 ){
-                bnt_ctrl_prev.setClickable(false);
-                bnt_ctrl_prev.setText("INSERT");
-            }
-            else {
-                bnt_ctrl_prev.setClickable(true);
-                bnt_ctrl_prev.setText("PREV");
-            }
-        }
-
-        if (bnt_ctrl_play!=null)
-        {
-            bnt_ctrl_play.setClickable(true);
-        }
-
+        updateAllBotton();
 
         // 清空画板
         resetCavans();

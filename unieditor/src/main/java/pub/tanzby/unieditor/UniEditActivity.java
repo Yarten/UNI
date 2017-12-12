@@ -384,12 +384,14 @@ public class UniEditActivity extends AppCompatActivity
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scale2Translaform = detector.getScaleFactor();
-        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)+0.6f;
-        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)+0.6f;
-        SCALE_FACTOR = scaleX;
+        float scaleX = (float) CAVANS.getScaleX()*scale2Translaform ;
+        float scaleY = (float)  CAVANS.getScaleY()*scale2Translaform ;
+
 
         if(!isDrawerOpen)
-
+            if (scaleX < 0.5) scaleX = scaleY = 0.5f;
+            if (scaleX > 2)  scaleY = scaleX = 2;
+            SCALE_FACTOR = scaleX;
             CAVANS.setScaleX(scaleX);
             CAVANS.setScaleY(scaleY);
 

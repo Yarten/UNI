@@ -93,16 +93,13 @@ public class GraphicsTools {
     {
         Bitmap image = null;
 
-        try
-        {
+        try {
             File file = new File(dir, name + ".png");
             if(file.exists())
                 image = BitmapFactory.decodeFile(file.getAbsolutePath());
         }
-        catch (Exception e)
-        {
+        catch (Exception e)  {
             e.printStackTrace();
-            image = null;
         }
 
         return image;
