@@ -1,10 +1,10 @@
-apply plugin: 'com.android.application'
-//apply plugin: 'com.android.library'
+//apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.example.vincent.yamlparser"
+//        applicationId "com.example.vincent.yamlparser"
         minSdkVersion 22
         targetSdkVersion 26
         versionCode 1

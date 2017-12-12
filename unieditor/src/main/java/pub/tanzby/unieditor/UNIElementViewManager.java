@@ -1,17 +1,26 @@
 package pub.tanzby.unieditor;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FrameProperty;
+import com.uni.utils.GraphicsTools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +50,9 @@ public class UNIElementViewManager {
     public Button bnt_ctrl_play;
     public Button bnt_ctrl_next;
     public Button bnt_ctrl_prev;
+    public Button bnt_ctrl_save;
+    public Button bnt_ctrl_dele;
+    public Button bnt_ctrl_inse;
 
 
     // 当前被选中的元素，通常用于批量移动
@@ -71,8 +83,11 @@ public class UNIElementViewManager {
         current_selected_element = new ArrayList<>();
         current_waiting_added_element = new ArrayList<>();
 
-        //注册EventBus
+        // 注册EventBus
         EventBus.getDefault().register(this);
+
+        // 绑定Canvans更新
+
     }
 
     public Integer getFrameID()
@@ -92,29 +107,36 @@ public class UNIElementViewManager {
      * @param next 用于执行 "下一帧" 的 按钮
      * @param prev 用于执行 "上一帧" 的 按钮
      */
-    public void setCtrlButtonGroup(@NonNull Button play, @NonNull Button next, @NonNull Button prev)
+    public void setCtrlButtonGroup(@NonNull Button play,
+                                   @NonNull Button next,
+                                   @NonNull Button prev,
+                                   @NonNull Button save,
+                                   @NonNull Button dele,
+                                   @NonNull Button inse)
     {
        bnt_ctrl_play=play;
        bnt_ctrl_prev=prev;
        bnt_ctrl_next=next;
+       bnt_ctrl_save=save;
+       bnt_ctrl_dele=dele;
+       bnt_ctrl_inse=inse;
+
+       forbidAllBotton();
+       updateAllBotton();
 
        bnt_ctrl_next.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                Toast.makeText(mContext,"next",Toast.LENGTH_SHORT).show();
-               updateNextFrame();
+               requestNextFrame();
            }
        });
         bnt_ctrl_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"play",Toast.LENGTH_SHORT).show();
-
                 // TODO 确保 保存数据到服务器
-
                 // TODO 跳转到 播放界面 或者重置画布直接播，如果是后者则需要重写按钮的事件
-
-
             }
         });
 
@@ -122,16 +144,58 @@ public class UNIElementViewManager {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext,"previous",Toast.LENGTH_SHORT).show();
-                updatePrevFrame();
+                requestPrevFrame();
             }
         });
 
-        bnt_ctrl_play.setOnLongClickListener(new View.OnLongClickListener() {
+        bnt_ctrl_inse.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 Toast.makeText(mContext,"insert",Toast.LENGTH_SHORT).show();
-                addNewFrame();
-                return true;
+                requestNewFrame();
+            }
+        });
+
+        bnt_ctrl_dele.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext,"delete",Toast.LENGTH_SHORT).show();
+                deleteCurrentFrame();
+            }
+        });
+
+        bnt_ctrl_save.setOnClickListener(new View.OnClickListener() {
+            private EditText edit = new EditText(mContext);
+            private AlertDialog dialog = new AlertDialog.Builder(mContext)
+                    .setView(edit)
+                    .setTitle("正在保存UNI，请确认")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("确认",null).create();
+
+            @Override
+            public void onClick(View v) {
+                edit.setHint("UNI的名字");
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!edit.getText().toString().isEmpty()){
+                            saveCavans(); // 保存全部
+                            Brief b = new Brief();
+                            b.title = edit.getText().toString();
+                            b.thumb = GraphicsTools.getShotCut(mCanvans);
+                            CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
+                        }
+                        else {
+                            edit.setError("不能为空");
+                        }
+                    }
+                });
             }
         });
     }
@@ -245,10 +309,11 @@ public class UNIElementViewManager {
     {
         for (UNIElementView ori: current_waiting_added_element)
         {
-            UNIElementView mUniViewItem = new UNIElementView(mContext);
+            UNIElementView mUniViewItem = ori.clone(mContext);
+                    //new UNIElementView(mContext);
 
             mUniViewItem.setPositionTo(x,y); // TODO batch 添加时应该区别最终位置
-            mUniViewItem.setImageBitmap(ori.mThumb);
+         //   mUniViewItem.setImageBitmap(ori.mThumb);
 
 
             // 为每一个添加到cavans 的元素
@@ -259,7 +324,7 @@ public class UNIElementViewManager {
                     current_selected_element.clear();
                     current_selected_element.add((UNIElementView)v);
                     ClipData data =  ClipData.newPlainText("ID","");
-                    v.startDrag(data,new View.DragShadowBuilder(v),null,0);
+                    v.startDrag(data,UNIDragShadowBuilder.fromUNI(mContext,(UNIElementView)v),null,0);
                     return false;
                 }
             });
@@ -280,6 +345,19 @@ public class UNIElementViewManager {
         current_waiting_added_element.clear();
     }
 
+    /**
+     * 保存Cavans上所有的元素
+     */
+    private void saveCavans() {
+        for (UNIElementView uni: current_added_element) {
+            CAN.DataBus.updateElement(frameID,uni.mProperty);
+        }
+    }
+
+
+    /**
+     * 重置画板
+     */
     private void resetCavans()
     {
 
@@ -300,37 +378,40 @@ public class UNIElementViewManager {
     /**
      * 请求上一帧
      */
-    public void updatePrevFrame()
+    public void requestPrevFrame()
     {
         if (frameID > 0)
+        {
+            forbidAllBotton();
             frameID--;
             CAN.DataBus.requireUpdate(frameID);
-        forbidAllBotton();
+        }
     }
 
     /**
      * 请求下一帧
      */
-    public void updateNextFrame()
+    public void requestNextFrame()
     {
         if (hasNext) {
+            forbidAllBotton();
             frameID++;
             CAN.DataBus.requireUpdate(frameID);
         }
-        forbidAllBotton();
     }
 
     /**
      * 在当前帧的位置插入一帧，如 1,2,3,4 当前在 2 时 * 将会插入到 1 2 * 3 4
      * 添加了之后直接跳到这一个帧
      */
-    public void addNewFrame()
+    public void requestNewFrame()
     {
+        forbidAllBotton();
         // 通知服务
         CAN.DataBus.addFrame(frameID);
         frameID ++;
         resetCavans();
-        forbidAllBotton();
+
     }
 
     /**
@@ -338,7 +419,7 @@ public class UNIElementViewManager {
      */
     public void deleteCurrentFrame()
     {
-
+        forbidAllBotton();
         if (hasNext)  {
             CAN.DataBus.requireUpdate(frameID+1);
         }
@@ -348,8 +429,6 @@ public class UNIElementViewManager {
         }
         CAN.DataBus.deleteFrame(frameID);
 
-
-        forbidAllBotton();
     }
 
 
@@ -377,8 +456,69 @@ public class UNIElementViewManager {
         bnt_ctrl_prev.setClickable(false);
         bnt_ctrl_play.setClickable(false);
         bnt_ctrl_next.setClickable(false);
-        bnt_ctrl_prev.setText("");
-        bnt_ctrl_next.setText("");
+        bnt_ctrl_dele.setClickable(false);
+        bnt_ctrl_inse.setClickable(false);
+        bnt_ctrl_save.setClickable(false);
+
+        bnt_ctrl_prev.setTextColor(Color.GRAY);
+        bnt_ctrl_play.setTextColor(Color.GRAY);
+        bnt_ctrl_next.setTextColor(Color.GRAY);
+        bnt_ctrl_dele.setTextColor(Color.GRAY);
+        bnt_ctrl_inse.setTextColor(Color.GRAY);
+        bnt_ctrl_save.setTextColor(Color.GRAY);
+    }
+
+    /**
+     * 更新所有按钮的状态，只开不关
+     */
+    private void updateAllBotton()
+    {
+        if (bnt_ctrl_prev!=null)
+        {
+            if (frameID!= 0) {
+                bnt_ctrl_prev.setTextColor(Color.BLACK);
+                bnt_ctrl_prev.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_play!=null)
+        {
+            if (true) // TODO: 能播放的条件
+            {
+                bnt_ctrl_play.setTextColor(Color.BLACK);
+                bnt_ctrl_play.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_next!=null)
+        {
+            if (hasNext)
+            {
+                bnt_ctrl_next.setTextColor(Color.BLACK);
+                bnt_ctrl_next.setClickable(true);
+            }
+        }
+        if (bnt_ctrl_save!=null)
+        {
+            if (true) // TODO: 能保存的条件
+            {
+                bnt_ctrl_save.setClickable(true);
+                bnt_ctrl_save.setTextColor(Color.BLACK);
+            }
+        }
+        if (bnt_ctrl_inse!=null) {
+            if (true) // TODO: 能插入的条件
+            {
+                bnt_ctrl_inse.setClickable(true);
+                bnt_ctrl_inse.setTextColor(Color.BLACK);
+            }
+        }
+        if (bnt_ctrl_dele!=null)
+        {
+            if (true) // TODO: 能删除的条件
+            {
+                bnt_ctrl_dele.setClickable(true);
+                bnt_ctrl_dele.setTextColor(Color.BLACK);
+            }
+        }
     }
 
 
@@ -394,33 +534,7 @@ public class UNIElementViewManager {
         hasNext = frameProperty.hasNext;
         //更新按钮
 
-        if ( bnt_ctrl_next!=null){
-            if (!hasNext) {
-                bnt_ctrl_next.setClickable(false);
-                bnt_ctrl_next.setText("ADD");
-            }
-            else {
-                bnt_ctrl_next.setClickable(true);
-                bnt_ctrl_next.setText("NEXT");
-            }
-        }
-
-        if (bnt_ctrl_prev!=null){
-            if (frameID==0 ){
-                bnt_ctrl_prev.setClickable(false);
-                bnt_ctrl_prev.setText("INSERT");
-            }
-            else {
-                bnt_ctrl_prev.setClickable(true);
-                bnt_ctrl_prev.setText("PREV");
-            }
-        }
-
-        if (bnt_ctrl_play!=null)
-        {
-            bnt_ctrl_play.setClickable(true);
-        }
-
+        updateAllBotton();
 
         // 清空画板
         resetCavans();
@@ -432,6 +546,8 @@ public class UNIElementViewManager {
             u.mProperty = pkg.props.get(i);
         }
     }
+
+
 
 
     @Override

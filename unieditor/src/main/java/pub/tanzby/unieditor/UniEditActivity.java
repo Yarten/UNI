@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.GraphicsTools;
 
@@ -42,6 +43,7 @@ public class UniEditActivity extends AppCompatActivity
         ScaleGestureDetector.OnScaleGestureListener
 
 {
+    //region 成员
     /*
      * 视图元素
      */
@@ -54,6 +56,9 @@ public class UniEditActivity extends AppCompatActivity
     Button bnt_play;
     Button bnt_next;
     Button bnt_prev;
+    Button bnt_save;
+    Button bnt_delete;
+    Button bnt_add;
 
     CircleSeekBar csb_rotation;
     CircleSeekBar csb_alpha;
@@ -77,9 +82,9 @@ public class UniEditActivity extends AppCompatActivity
     boolean isDrawerOpen;
 
     UNIMenuElementAdapter mAdapter;
-    List<UNIElementView> u = new ArrayList<>();
 
     private final String TAG = "EDITOR";
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +95,7 @@ public class UniEditActivity extends AppCompatActivity
 
         setMenu(this);
         CAN.DataBus.requireMenu(10, 0);
-
+        CAN.DataBus.requireUpdate(0);
         mainEvenBinding();
     }
 
@@ -108,6 +113,9 @@ public class UniEditActivity extends AppCompatActivity
         bnt_play = findViewById(R.id.bnt_editor_play);
         bnt_next = findViewById(R.id.bnt_editor_next);
         bnt_prev = findViewById(R.id.bnt_editor_prev);
+        bnt_save = findViewById(R.id.bnt_editor_save);
+        bnt_delete=findViewById(R.id.bnt_editor_delete);
+        bnt_add=findViewById(R.id.bnt_editor_add);
 
         csb_rotation = findViewById(R.id.CSB_item_setting_rotation);
         csb_alpha    = findViewById(R.id.CSB_item_setting_alpha);
@@ -122,6 +130,7 @@ public class UniEditActivity extends AppCompatActivity
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
 
         ROOT.setScrimColor(Color.TRANSPARENT);
+        CAN.login(this);
     }
 
 
@@ -130,7 +139,7 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void mainEvenBinding()
     {
-        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev);
+        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev,bnt_save,bnt_delete,bnt_add);
 
         ROOT.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,Gravity.RIGHT);
 
@@ -171,6 +180,7 @@ public class UniEditActivity extends AppCompatActivity
                 return false;
             }
         });
+
 
         MAINContent.setOnTouchListener(this);
 
@@ -290,48 +300,10 @@ public class UniEditActivity extends AppCompatActivity
         });
     }
 
-    // TODO: 修改成由通知来设置menu
+    // 初始化Menu
     private void setMenu(Context context)
     {
-        UNIElementView ansU;
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.people));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.low));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.clound));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog2));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.high));
-        u.add(ansU);
-
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog3));
-        u.add(ansU);
-
-        ansU = new UNIElementView(context);
-        ansU.setImageBitmap(GraphicsTools.imgtool.res2bitmap(context,R.drawable.dialog4));
-        u.add(ansU);
-
-
-
-
-        mAdapter = new UNIMenuElementAdapter<>(context,u);
+        mAdapter = new UNIMenuElementAdapter<UNIElementView>(context,null);
 
         RecyclerView rv = LEFTMENU.findViewById(R.id.rv_editor_uni_item_menu);
         rv.setLayoutManager(new GridLayoutManager(context,3));
@@ -374,16 +346,17 @@ public class UniEditActivity extends AppCompatActivity
         return mScaleGes;
     }
 
-
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scale2Translaform = detector.getScaleFactor();
-        float scaleX = (float) Math.tanh(CAVANS.getScaleX()*scale2Translaform)+0.6f;
-        float scaleY = (float) Math.tanh(CAVANS.getScaleY()*scale2Translaform)+0.6f;
-        SCALE_FACTOR = scaleX;
+        float scaleX = (float) CAVANS.getScaleX()*scale2Translaform ;
+        float scaleY = (float)  CAVANS.getScaleY()*scale2Translaform ;
+
 
         if(!isDrawerOpen)
-
+            if (scaleX < 0.5) scaleX = scaleY = 0.5f;
+            if (scaleX > 2)  scaleY = scaleX = 2;
+            SCALE_FACTOR = scaleX;
             CAVANS.setScaleX(scaleX);
             CAVANS.setScaleY(scaleY);
 
@@ -399,5 +372,6 @@ public class UniEditActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        CAN.logout(this);
     }
 }

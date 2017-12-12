@@ -1,5 +1,6 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/uniEditor_layout_root"
     android:background="#ddd"
     android:layout_width="match_parent"
@@ -36,46 +37,95 @@
     </RelativeLayout>
 
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layout_button_ctrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom|center_horizontal">
 
         <Button
+
             android:id="@+id/bnt_editor_play"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
             android:layout_alignParentTop="true"
-            android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/bnt_editor_prev"
             android:background="#eee"
             android:shadowRadius="5"
-            android:text="P/IN"
-            android:textStyle="bold" />
+            android:text="PLAY"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_next"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_prev" />
 
         <Button
+            app:layout_constraintHorizontal_chainStyle="packed"
             android:id="@+id/bnt_editor_next"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
             android:layout_alignParentTop="true"
-            android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/bnt_editor_play"
             android:background="#eee"
             android:shadowRadius="5"
             android:text="NEXT"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_save"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_play" />
 
         <Button
+            android:id="@+id/bnt_editor_save"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="#eee"
+            android:shadowRadius="5"
+            android:text="SAVE"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_delete"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_next" />
+
+        <Button
+            android:id="@+id/bnt_editor_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="#eee"
+            android:shadowRadius="5"
+            android:text="DELE"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_add"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_save" />
+
+        <Button
+            android:id="@+id/bnt_editor_add"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginEnd="8dp"
+            android:background="#eee"
+            android:shadowRadius="5"
+            android:text="ADD"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete" />
+
+        <Button
+
             android:id="@+id/bnt_editor_prev"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:layout_margin="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="8dp"
             android:background="#eee"
             android:shadowRadius="5"
             android:text="PREV"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_play"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
 
 

@@ -112,23 +112,6 @@ public class CAN
                 public List<Brief> items;
             }
         }
-//        public static class MenuRequest
-//        {
-//            public enum Type
-//            {
-//                EditorMenu,
-//                MainMenu
-//            }
-//
-//            public int number;
-//            public int startFrom;
-//            public Type what;
-//        }
-//
-//        public static class MenuUpdate
-//        {
-//            public List<Brief> items;
-//        }
 
         public static class EditorCommit
         {

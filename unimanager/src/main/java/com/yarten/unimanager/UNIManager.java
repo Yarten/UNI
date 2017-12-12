@@ -9,6 +9,7 @@ import com.uni.uniplayer.UNIElement;
 import com.uni.uniplayer.UNIFrame;
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
+import com.uni.utils.FileUtils;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.Property;
@@ -42,6 +43,8 @@ public class UNIManager
 
     private UNIFrame uniFrame = new UNIFrame();
 
+    private FileUtils fileUtils = null;
+
     private Context context;
 
     private boolean hasInited = false;
@@ -53,6 +56,7 @@ public class UNIManager
         this.context = context;
         elementManager = new ElementManager(context);
         frameManager = new FrameManager(context);
+        fileUtils = FileUtils.init(context);
         hasInited = true;
 
         CAN.login(this);
@@ -123,7 +127,7 @@ public class UNIManager
 
     public void saveUNIFrame(File root, Brief brief)
     {
-        File dir = context.getDir(root.getPath() + "/" + brief.title, Context.MODE_PRIVATE);
+        File dir = fileUtils.getDir(root, brief.title);
         YAMLParser yaml = new YAMLParser(dir, brief.title + ".yaml");
         yaml.setBrief(brief.author, brief.description, brief.date, brief.url, brief.title);
 
@@ -143,7 +147,7 @@ public class UNIManager
         }
 
         yaml.saveYAML();
-        GraphicsTools.saveToLocal(dir, "thumb.png", brief.thumb);
+        GraphicsTools.saveToLocal(dir, "thumb", brief.thumb);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)

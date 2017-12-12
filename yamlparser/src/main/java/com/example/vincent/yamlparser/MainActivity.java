@@ -27,7 +27,18 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
 
+        List<String> lists = new ArrayList<>();
+        List<Integer> icons = new ArrayList<>();
+        lists.add("面对面快传");
+        icons.add(R.mipmap.back);
+        lists.add("付款");
+        icons.add(R.mipmap.back);
+        lists.add("拍摄");
+        icons.add(R.mipmap.back);
+
         MenuButton menuButton = findViewById(R.id.menu_button);
+        menuButton.setLists(lists);
+        menuButton.setIcons(icons);
         menuButton.setOnItemClickListener(new MenuButton.OnItemClickListener() {
             @Override
             public void onNextButtonClick() {

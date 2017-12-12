@@ -38,7 +38,7 @@ public class GraphicsTools {
      * @param pxValue 需要进行转换的px值
      * @return 转换后的dip值
      */
-    public static float px2dip(Context context, float pxValue) {
+    public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
@@ -49,7 +49,7 @@ public class GraphicsTools {
      * @param dpValue 需要进行转换的dip值
      * @return 转换后的px值
      */
-    public static float dip2px(Context context, float dpValue) {
+    public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
@@ -64,7 +64,8 @@ public class GraphicsTools {
     public static boolean saveToLocal(File dir, String name, Bitmap image)
     {
         File file = new File(dir, name + ".png");
-        if(file.exists()) file.delete();
+        if(file.exists())
+            file.delete();
         else try
         {
             file.createNewFile();
@@ -92,20 +93,30 @@ public class GraphicsTools {
     {
         Bitmap image = null;
 
-        try
-        {
+        try {
             File file = new File(dir, name + ".png");
             if(file.exists())
                 image = BitmapFactory.decodeFile(file.getAbsolutePath());
         }
-        catch (Exception e)
-        {
+        catch (Exception e)  {
             e.printStackTrace();
-            image = null;
         }
 
         return image;
     }
+
+    /**
+     * 获取一个view 的截图
+     * @param v 需要截图的View
+     * @return <tt>bitmap</tt> View 的截图
+     */
+    public static Bitmap getShotCut(View v)
+    {
+        v.setDrawingCacheEnabled(true);
+        Bitmap tBitmap = v.getDrawingCache();
+        tBitmap = tBitmap.createBitmap(tBitmap);
+        return tBitmap;
+    };
 
     /**
      * 用于处理沉浸式状态栏的一个类
