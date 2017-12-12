@@ -139,7 +139,7 @@ public class UniEditActivity extends AppCompatActivity
      */
     private void mainEvenBinding()
     {
-        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev,bnt_save,bnt_add,bnt_delete);
+        mMangeer.setCtrlButtonGroup(bnt_play,bnt_next,bnt_prev,bnt_save,bnt_delete,bnt_add);
 
         ROOT.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,Gravity.RIGHT);
 
