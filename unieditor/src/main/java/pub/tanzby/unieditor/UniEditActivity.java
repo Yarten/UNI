@@ -58,16 +58,17 @@ public class UniEditActivity extends AppCompatActivity
     DrawerLayout     ROOT;          // 根
     CardView         FLOATCTRL;     // 浮动的控制菜单
 
-    Button bnt_play;
-    Button bnt_next;
-    Button bnt_prev;
-    Button bnt_save;
-    Button bnt_delete;
-    Button bnt_add;
+    Button bnt_play;  // 播放 或 暂停
+    Button bnt_next;  // 请求 下一帧
+    Button bnt_prev;  // 请求 上一帧
+    Button bnt_save;  // 请求 保存
+    Button bnt_delete;// 请求 删除
+    Button bnt_add;   // 请求 插入 或 添加
 
     CircleSeekBar csb_rotation;
     CircleSeekBar csb_alpha;
     CircleSeekBar csb_scale;
+
     TextView tv_rotation;
     TextView tv_alpha;
     TextView tv_frameID;
@@ -102,8 +103,6 @@ public class UniEditActivity extends AppCompatActivity
         CAN.DataBus.requireMenu(10, 0);
         CAN.DataBus.requireUpdate(0);
         mainEvenBinding();
-
-
     }
 
     /**

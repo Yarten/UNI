@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         Permission.verifyExternalStoragePermissions(this);
         init();
-        evenbing();
+        evenBinding();
         makeSomeNoise();
     }
 
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void evenbing()
+    private void evenBinding()
     {
         mAdapter.setOnItemClickLitener(new UNIFrameAdapter.OnItemClickLitener() {
 
