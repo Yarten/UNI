@@ -82,7 +82,7 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         holder.title.setText(mList.get(position).toString());
-        holder.uniView.setUNIFrame((UNIFrame) mList.get(position));
+//        holder.uniView.setUNIFrame((UNIFrame) mList.get(position));
 
 
         if (mOnItemClickLitener != null) {

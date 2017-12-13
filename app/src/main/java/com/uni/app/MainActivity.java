@@ -56,21 +56,21 @@ public class MainActivity extends AppCompatActivity {
 
         List<UNIFrame> ls = new ArrayList<>();
 
-//        List<String> l = new ArrayList<>();
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
-//        l.add("XXXX");
+        List<String> l = new ArrayList<>();
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
+        l.add("XXXX");
 
-        mAdapter = new UNIFrameAdapter<UNIFrame>(this);
+        mAdapter = new UNIFrameAdapter<String>(this,l);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
 

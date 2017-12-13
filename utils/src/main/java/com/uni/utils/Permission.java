@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 public class Permission {
 
     private static final int REQUEST_CODE = 1;
+
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE ,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -23,6 +24,14 @@ public class Permission {
     private static String[] PERMISSIONS_CAMERA = {
             Manifest.permission.CAMERA,
     };
+    private static String[] PERMISSIONS_CONTACTS = {
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_CONTACTS
+    };
+    private static String[] PERMISSIONS_INTERNET = {
+            Manifest.permission.INTERNET
+    };
+
     /**
      * 外部储存的的权限申请
      */
@@ -35,6 +44,7 @@ public class Permission {
                     PERMISSIONS_STORAGE, REQUEST_CODE);
         }
     }
+
     /**
      * 相机的权限申请
      */
@@ -45,6 +55,34 @@ public class Permission {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity,
                     PERMISSIONS_CAMERA, REQUEST_CODE);
+        }
+    }
+
+    /**
+     * 获取联系人权限
+     */
+    public static void verifyContactPermissions(Activity activity)
+    {
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_CONTACTS);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    PERMISSIONS_CONTACTS, REQUEST_CODE);
+        }
+    }
+
+    /**
+     * 获取网络访问权限
+     */
+    public static void verifyInternetPermissions(Activity activity)
+    {
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.INTERNET);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    PERMISSIONS_INTERNET, REQUEST_CODE);
         }
     }
 }
