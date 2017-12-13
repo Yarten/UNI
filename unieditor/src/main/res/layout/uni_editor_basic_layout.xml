@@ -15,20 +15,15 @@
         android:layout_height="match_parent">
 
 
-
-
-
         <RelativeLayout
             android:id="@+id/uniEditor_layout_cavans"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
-            android:layout_marginBottom="60dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="20dp"
-            android:background="#fff" />
+            android:layout_margin="20dp"
+            android:background="#fff">
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_editor_frameID"
@@ -36,109 +31,124 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/uniEditor_layout_cavans"
             android:layout_alignTop="@id/uniEditor_layout_cavans"
-            android:text="20"
+            android:layout_margin="5dp"
+            android:text="-1"
             android:textColor="#aaa"
             android:textStyle="bold|italic" />
 
     </RelativeLayout>
 
-
-    <com.uni.utils.MenuButton.MenuButton
-        android:id="@+id/uniEditor_layout_menu"
-        android:layout_width="100dp"
-        android:layout_height="100dp">
-
-    </com.uni.utils.MenuButton.MenuButton>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/layout_button_ctrl"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="bottom|center_horizontal">
+        android:layout_height="wrap_content">
 
-        <Button
-
-            android:id="@+id/bnt_editor_play"
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/uni_editor_float_menu"
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_alignParentTop="true"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="PLAY"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_next"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_prev" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="200dp"
+            android:alpha="0.8"
+            android:elevation="8dp"
+            android:paddingRight="10dp"
+            app:cardBackgroundColor="@color/_4a4a4a"
+            app:cardCornerRadius="8dp">
 
-        <Button
-            app:layout_constraintHorizontal_chainStyle="packed"
-            android:id="@+id/bnt_editor_next"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_alignParentTop="true"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="NEXT"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_save"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_play" />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:background="#fff">
 
-        <Button
-            android:id="@+id/bnt_editor_save"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="SAVE"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_delete"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_next" />
+                <Button
 
-        <Button
-            android:id="@+id/bnt_editor_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="DELE"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_add"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_save" />
+                    android:id="@+id/bnt_editor_play"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_play_arrow_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+                    app:layout_constraintEnd_toStartOf="@+id/bnt_editor_next"
+                    app:layout_constraintStart_toEndOf="@+id/bnt_editor_prev" />
 
-        <Button
-            android:id="@+id/bnt_editor_add"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_marginEnd="8dp"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="ADD"
-            android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete" />
+                <Button
+                    android:id="@+id/bnt_editor_next"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_chevron_right_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+                    app:layout_constraintEnd_toStartOf="@+id/bnt_editor_save"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@+id/bnt_editor_play" />
 
-        <Button
+                <Button
+                    android:id="@+id/bnt_editor_save"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_save_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+                    app:layout_constraintEnd_toStartOf="@+id/bnt_editor_delete"
+                    app:layout_constraintStart_toEndOf="@+id/bnt_editor_next" />
 
-            android:id="@+id/bnt_editor_prev"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="8dp"
-            android:background="#eee"
-            android:shadowRadius="5"
-            android:text="PREV"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/bnt_editor_play"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+                <Button
+                    android:id="@+id/bnt_editor_delete"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_delete_forever_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+                    app:layout_constraintEnd_toStartOf="@+id/bnt_editor_add"
+                    app:layout_constraintStart_toEndOf="@+id/bnt_editor_save" />
 
-    </android.support.constraint.ConstraintLayout>
+                <Button
+                    android:id="@+id/bnt_editor_add"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/ic_add_location_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/bnt_editor_prev"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/bnt_editor_delete" />
+
+                <Button
+
+                    android:id="@+id/bnt_editor_prev"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/ic_chevron_left_grey_400_24dp"
+                    android:shadowRadius="5"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/bnt_editor_play"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
 
 
 

@@ -10,7 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="center"
-        android:text="AAA" />
+        android:text="AAA"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
 
     <View
         android:layout_width="match_parent"

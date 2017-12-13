@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
 import android.support.annotation.NonNull;
@@ -15,8 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FrameProperty;
@@ -44,8 +47,10 @@ public class UNIElementViewManager {
 
     private int frameID;
 
-
     private Boolean hasNext;
+
+    private boolean is_playing = false;
+
 
     public Button bnt_ctrl_play;
     public Button bnt_ctrl_next;
@@ -75,6 +80,7 @@ public class UNIElementViewManager {
     {
         frameID = 0;
         hasNext = false;
+        is_playing = false;
 
         mCanvans = canvans;
         mContext  = context;
@@ -100,6 +106,8 @@ public class UNIElementViewManager {
         return hasNext;
     }
 
+    public Boolean isPlaying(){return is_playing;}
+
 
     /**
      * 设置Manager 所要使用的控制单元
@@ -122,7 +130,7 @@ public class UNIElementViewManager {
        bnt_ctrl_inse=inse;
 
        forbidAllBotton();
-       updateAllBotton();
+
 
        bnt_ctrl_next.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -132,11 +140,27 @@ public class UNIElementViewManager {
            }
        });
         bnt_ctrl_play.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"play",Toast.LENGTH_SHORT).show();
-                // TODO 确保 保存数据到服务器
-                // TODO 跳转到 播放界面 或者重置画布直接播，如果是后者则需要重写按钮的事件
+            Toast.makeText(mContext,"play",Toast.LENGTH_SHORT).show();
+            if (!is_playing) //查询服务器中是否已经有这一个 uni frame
+            {
+                resetCavans();
+                UNIView view = new UNIView(mContext);
+                ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
+                        , ViewGroup.LayoutParams.MATCH_PARENT);
+                view.setLayoutParams(lp);
+                view.setBackgroundColor(Color.GRAY);
+                mCanvans.addView(view);
+                bnt_ctrl_play.setBackgroundResource(R.drawable.ic_pause_red_a400_24dp);
+                is_playing = true;
+            }
+            else
+            {
+                CAN.DataBus.requireUpdate(frameID);
+                is_playing=false;
+            }
             }
         });
 
@@ -184,23 +208,21 @@ public class UNIElementViewManager {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!edit.getText().toString().isEmpty()){
-                            saveCavans(); // 保存全部
-                            Brief b = new Brief();
-                            b.title = edit.getText().toString();
-                            b.thumb = GraphicsTools.getShotCut(mCanvans);
-                            CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
-                        }
-                        else {
-                            edit.setError("不能为空");
-                        }
+                    if (!edit.getText().toString().isEmpty()){
+                        saveCavans(); // 保存全部
+                        Brief b = new Brief();
+                        b.title = edit.getText().toString();
+                        b.thumb = GraphicsTools.getShotCut(mCanvans);
+                        CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
+                    }
+                    else {
+                        edit.setError("不能为空");
+                    }
                     }
                 });
             }
         });
     }
-
-
 
     /**
      * 当前是否有元素被选到
@@ -431,10 +453,8 @@ public class UNIElementViewManager {
 
     }
 
-
-
     /**
-     * Uni 点击的接口
+     * Cavans 中每一个 item 的点击接口
      */
 
     public interface OnUniItemClickLitener
@@ -449,74 +469,74 @@ public class UNIElementViewManager {
     }
 
     /**
-     * 禁用所有按钮
+     * 禁用所有按钮，启动之后按钮全部被置为不可点击状态，并相应替换背景图片
      */
     private void forbidAllBotton()
     {
-        bnt_ctrl_prev.setClickable(false);
-        bnt_ctrl_play.setClickable(false);
-        bnt_ctrl_next.setClickable(false);
-        bnt_ctrl_dele.setClickable(false);
-        bnt_ctrl_inse.setClickable(false);
-        bnt_ctrl_save.setClickable(false);
+        bnt_ctrl_prev.setEnabled(false);
+        bnt_ctrl_play.setEnabled(false);
+        bnt_ctrl_next.setEnabled(false);
+        bnt_ctrl_dele.setEnabled(false);
+        bnt_ctrl_inse.setEnabled(false);
+        bnt_ctrl_save.setEnabled(false);
 
-        bnt_ctrl_prev.setTextColor(Color.GRAY);
-        bnt_ctrl_play.setTextColor(Color.GRAY);
-        bnt_ctrl_next.setTextColor(Color.GRAY);
-        bnt_ctrl_dele.setTextColor(Color.GRAY);
-        bnt_ctrl_inse.setTextColor(Color.GRAY);
-        bnt_ctrl_save.setTextColor(Color.GRAY);
+        bnt_ctrl_prev.setBackgroundResource(R.drawable.ic_chevron_left_grey_400_24dp);
+        bnt_ctrl_play.setBackgroundResource(R.drawable.ic_play_arrow_grey_400_24dp);
+        bnt_ctrl_next.setBackgroundResource(R.drawable.ic_chevron_right_grey_400_24dp);
+        bnt_ctrl_dele.setBackgroundResource(R.drawable.ic_delete_forever_grey_400_24dp);
+        bnt_ctrl_inse.setBackgroundResource(R.drawable.ic_add_location_grey_400_24dp);
+        bnt_ctrl_save.setBackgroundResource(R.drawable.ic_save_grey_400_24dp);
     }
 
     /**
-     * 更新所有按钮的状态，只开不关
+     * 根据一定条件更改所有才做按钮的状态
      */
     private void updateAllBotton()
     {
         if (bnt_ctrl_prev!=null)
         {
             if (frameID!= 0) {
-                bnt_ctrl_prev.setTextColor(Color.BLACK);
-                bnt_ctrl_prev.setClickable(true);
+                bnt_ctrl_prev.setBackgroundResource(R.drawable.ic_chevron_left_grey_900_24dp);
+                bnt_ctrl_prev.setEnabled(true);
             }
         }
         if (bnt_ctrl_play!=null)
         {
             if (true) // TODO: 能播放的条件
             {
-                bnt_ctrl_play.setTextColor(Color.BLACK);
-                bnt_ctrl_play.setClickable(true);
+                bnt_ctrl_play.setBackgroundResource(R.drawable.ic_play_arrow_red_a400_24dp);
+                bnt_ctrl_play.setEnabled(true);
             }
         }
         if (bnt_ctrl_next!=null)
         {
             if (hasNext)
             {
-                bnt_ctrl_next.setTextColor(Color.BLACK);
-                bnt_ctrl_next.setClickable(true);
+                bnt_ctrl_next.setBackgroundResource(R.drawable.ic_chevron_right_grey_900_24dp);
+                bnt_ctrl_next.setEnabled(true);
             }
         }
         if (bnt_ctrl_save!=null)
         {
             if (true) // TODO: 能保存的条件
             {
-                bnt_ctrl_save.setClickable(true);
-                bnt_ctrl_save.setTextColor(Color.BLACK);
+                bnt_ctrl_save.setEnabled(true);
+                bnt_ctrl_save.setBackgroundResource(R.drawable.ic_save_grey_900_24dp);
             }
         }
         if (bnt_ctrl_inse!=null) {
             if (true) // TODO: 能插入的条件
             {
-                bnt_ctrl_inse.setClickable(true);
-                bnt_ctrl_inse.setTextColor(Color.BLACK);
+                bnt_ctrl_inse.setEnabled(true);
+                bnt_ctrl_inse.setBackgroundResource(R.drawable.ic_add_location_grey_900_24dp);
             }
         }
         if (bnt_ctrl_dele!=null)
         {
             if (true) // TODO: 能删除的条件
             {
-                bnt_ctrl_dele.setClickable(true);
-                bnt_ctrl_dele.setTextColor(Color.BLACK);
+                bnt_ctrl_dele.setEnabled(true);
+                bnt_ctrl_dele.setBackgroundResource(R.drawable.ic_delete_grey_900_24dp);
             }
         }
     }
@@ -530,14 +550,16 @@ public class UNIElementViewManager {
     public void updateCanvas(CAN.Package.EditorUpdate pkg)
     {
         FrameProperty frameProperty = pkg.frameProperty;
+
         // TODO: 加上帧的另外两个属性的设置：与上一帧的距离，当前帧的停留时间。
+
         hasNext = frameProperty.hasNext;
         //更新按钮
-
         updateAllBotton();
-
         // 清空画板
         resetCavans();
+        // 更新帧号
+        ((TextView)mCanvans.findViewById(R.id.tv_editor_frameID)).setText(frameID+"");
 
         for (int i = 0;i < pkg.props.size(); i++)
         {
@@ -547,13 +569,12 @@ public class UNIElementViewManager {
         }
     }
 
-
-
-
     @Override
     protected void finalize() throws Throwable {
         //注销EventBus
         EventBus.getDefault().unregister(this);
         super.finalize();
     }
+
+
 }

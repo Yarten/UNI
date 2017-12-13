@@ -3,6 +3,7 @@ package pub.tanzby.unieditor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -54,11 +55,12 @@ public class UNIDragShadowBuilder extends View.DragShadowBuilder {
 
         uni.setDrawingCacheEnabled(true);
         Bitmap tBitmap = uni.getDrawingCache();
-        tBitmap = tBitmap.createBitmap(tBitmap);
-        tBitmap= ThumbnailUtils.extractThumbnail(tBitmap,
-                (int) (uni.getWidth() *uni.getScaleX()),
-                (int) (uni.getHeight()*uni.getScaleY()) );
-
+        Matrix matrix = new Matrix();
+        // 缩放原图
+        matrix.postScale(uni.getScaleX(), uni.getScaleY());
+        // 向左旋转45度，参数为正则向右旋转
+        matrix.postRotate(uni.getRotation());
+        tBitmap = tBitmap.createBitmap(tBitmap,0,0,uni.getWidth(),uni.getHeight(),matrix,false);
         return fromBitmap(context,tBitmap);
     }
 

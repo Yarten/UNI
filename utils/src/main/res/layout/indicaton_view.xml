@@ -4,23 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:alpha="0.9"
     android:elevation="8dp"
+    android:paddingRight="10dp"
+    app:cardBackgroundColor="@color/_4a4a4a"
     app:cardCornerRadius="8dp">
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:background="#fff">
 
         <Button
             android:id="@+id/prev_indication_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/ic_chevron_left_grey_900_24dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/next_indication_view"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,9 +35,9 @@
             android:id="@+id/next_indication_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/ic_chevron_right_grey_900_24dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:background="@drawable/ic_launcher_background"
             app:layout_constraintBaseline_toBaselineOf="@+id/prev_indication_view"
             app:layout_constraintEnd_toStartOf="@+id/menu_indication_view"
             app:layout_constraintStart_toEndOf="@+id/prev_indication_view" />
@@ -42,24 +47,14 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/ic_menu_yellow_a700_24dp"
+            android:layout_marginStart="2dp"
+            android:background="@drawable/ic_launcher_foreground"
             android:elevation="0dp"
             android:scaleX="1"
             android:scaleY="1"
             app:layout_constraintBaseline_toBaselineOf="@+id/prev_indication_view"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toEndOf="@+id/next_indication_view" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="5dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
-            android:background="#aaa"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/next_indication_view" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

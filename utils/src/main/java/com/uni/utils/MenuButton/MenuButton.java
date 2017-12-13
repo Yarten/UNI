@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,36 +33,6 @@ import java.util.List;
 public class MenuButton extends LinearLayout implements View.OnTouchListener, View.OnLongClickListener{
 
     int lastX,lastY;
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int rawX = (int) event.getRawX();
-        int rawY = (int) event.getRawY();
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                lastX = rawX;
-                lastY = rawY;
-
-                Log.i("MENU","DOWN");
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                int offsetX = rawX - lastX;
-                int offsetY = rawY - lastY;
-
-                scrollBy(-offsetX, -offsetY);
-
-                lastX = rawX;
-                lastY = rawY;
-                Log.i("MENU","MOVE");
-
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.i("MENU","UP");
-                break;
-        }
-        return true;
-    }
 
     @Override
     public boolean onLongClick(View v) {
@@ -120,7 +91,7 @@ public class MenuButton extends LinearLayout implements View.OnTouchListener, Vi
             }
         });
 
-        ((ConstraintLayout)btn_prev.getParent()).setOnTouchListener(this);
+        ((CardView)btn_prev.getParent().getParent()).setOnTouchListener(this);
 
     }
 
@@ -134,65 +105,85 @@ public class MenuButton extends LinearLayout implements View.OnTouchListener, Vi
     }
 
     private void showMenuItem(View v, float v1, int gravityLeft){
-//        mLists.clear();
-//        mIcons.clear();
-//
-//        mLists.add("面对面快传");
-//        mIcons.add(R.mipmap.back);
-//        mLists.add("付款");
-//        mIcons.add(R.mipmap.back);
-//        mLists.add("拍摄");
-//        mIcons.add(R.mipmap.back);
+
         IndicatorDialog dialog = new IndicatorBuilder((Activity) mContext)
-                .width(260)
-               // .animator(R.style.dialog_exit)
-                .height((int) (30 * 0.4))
-                .height(-1)
-                .ArrowDirection(IndicatorBuilder.LEFT)
-                .bgColor(Color.WHITE)
-                .gravity(gravityLeft)
-                .ArrowRectage(0.4f)
-                .radius(20)
-                .layoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false))
-                .adapter(new BaseAdapter() {
-                    @Override
-                    public void onBindView(BaseViewHolder holder, int position) {
-                        TextView tv = holder.getView(R.id.item_add);
-                        tv.setText(mLists.get(position));
+            .width(300)
+            .height((int) (30 * 0.4))
+            .height(-1)
+            .ArrowDirection(IndicatorBuilder.LEFT)
+            .bgColor(Color.WHITE)
+            .gravity(gravityLeft)
+            .ArrowRectage(0.4f)
+            .radius(20)
+            .layoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false))
+            .adapter(new BaseAdapter() {
+                @Override
+                public void onBindView(BaseViewHolder holder, int position) {
+                    TextView tv = holder.getView(R.id.item_add);
+                    tv.setText(mLists.get(position));
 
-                        if (position == mLists.size() - 1) {
-                            holder.setVisibility(R.id.item_line, BaseViewHolder.GONE);
-                        } else {
-                            holder.setVisibility(R.id.item_line, BaseViewHolder.VISIBLE);
+                    if (position == mLists.size() - 1) {
+                        holder.setVisibility(R.id.item_line, BaseViewHolder.GONE);
+                    } else {
+                        holder.setVisibility(R.id.item_line, BaseViewHolder.VISIBLE);
 
-                        }
                     }
+                }
+                @Override
+                public int getLayoutID(int position) { return R.layout.menu_item_view;   }
 
-                    @Override
-                    public int getLayoutID(int position) {
-                        return R.layout.menu_item_view;
-                    }
+                @Override
+                public boolean clickable() {
+                    return true;
+                }
 
-                    @Override
-                    public boolean clickable() {
-                        return true;
-                    }
+                @Override
+                public void onItemClick(View v, int position) {
+                    onItemClickListener.onMenuItemClick(position);
+                }
 
-                    @Override
-                    public void onItemClick(View v, int position) {
-                        onItemClickListener.onMenuItemClick(position);
-                    }
-
-                    @Override
-                    public int getItemCount() {
-                        return mLists.size();
-                    }
-                }).create();
+                @Override
+                public int getItemCount() {
+                    return mLists.size();
+                }
+            }).create();
 
         dialog.setCanceledOnTouchOutside(true);
         dialog.show(v);
+
     }
 
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int rawX = (int) event.getRawX();
+        int rawY = (int) event.getRawY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = rawX;
+                lastY = rawY;
+
+                Log.i("MENU","DOWN");
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                int offsetX = rawX - lastX;
+                int offsetY = rawY - lastY;
+
+                scrollBy(-offsetX, -offsetY);
+
+                lastX = rawX;
+                lastY = rawY;
+                Log.i("MENU","MOVE");
+
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.i("MENU","UP");
+                break;
+        }
+        return true;
+    }
 
 
 

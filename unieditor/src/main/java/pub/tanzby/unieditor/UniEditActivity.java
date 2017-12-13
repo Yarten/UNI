@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ public class UniEditActivity extends AppCompatActivity
     RelativeLayout   CAVANS;        // 主屏画板
     RelativeLayout   MAINContent;   // 主屏
     DrawerLayout     ROOT;          // 根
+    CardView         FLOATCTRL;     // 浮动的控制菜单
 
     Button bnt_play;
     Button bnt_next;
@@ -99,6 +102,8 @@ public class UniEditActivity extends AppCompatActivity
         CAN.DataBus.requireMenu(10, 0);
         CAN.DataBus.requireUpdate(0);
         mainEvenBinding();
+
+
     }
 
     /**
@@ -111,6 +116,7 @@ public class UniEditActivity extends AppCompatActivity
         CAVANS   = findViewById(R.id.uniEditor_layout_cavans);
         MAINContent = findViewById(R.id.uniEditor_layout_main);
         ROOT     = findViewById(R.id.uniEditor_layout_root);
+        FLOATCTRL= findViewById(R.id.uni_editor_float_menu);
 
         bnt_play = findViewById(R.id.bnt_editor_play);
         bnt_next = findViewById(R.id.bnt_editor_next);
@@ -128,6 +134,8 @@ public class UniEditActivity extends AppCompatActivity
         tv_scale     = findViewById(R.id.tv_item_setting_scale);
         tv_frameID   = findViewById(R.id.tv_editor_frameID);
 
+
+
         mMangeer = new UNIElementViewManager(this,CAVANS);
         mScaleGestureDetector = new ScaleGestureDetector(this, this);
 
@@ -135,49 +143,7 @@ public class UniEditActivity extends AppCompatActivity
         CAN.login(this);
 
 
-
-        List<String> lists = new ArrayList<>();
-        List<Integer> icons = new ArrayList<>();
-        lists.add("SAVE");
-        icons.add(R.mipmap.back);
-        lists.add("DELETE");
-        icons.add(R.mipmap.back);
-        lists.add("PLAY");
-        icons.add(R.mipmap.back);
-
-        MenuButton menuButton = findViewById(R.id.uniEditor_layout_menu);
-
-        menuButton.setLists(lists);
-        menuButton.setIcons(icons);
-        menuButton.setOnItemClickListener(new MenuButton.OnItemClickListener() {
-            @Override
-            public void onNextButtonClick() {
-                Toast.makeText(UniEditActivity.this, "You've clicked  Next", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onMenuItemClick(int position) {
-                switch (position){
-                    case 0:
-                        Toast.makeText(UniEditActivity.this, "You've clicked  0", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        Toast.makeText(UniEditActivity.this, "You've clicked  1", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        Toast.makeText(UniEditActivity.this, "You've clicked  2", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-
-            @Override
-            public void onPrevButtonClick() {
-                Toast.makeText(UniEditActivity.this, "You've clicked  Prev", Toast.LENGTH_SHORT).show();
-            }
-        });
-
     }
-
 
     /**
      * 比较重要的事件绑定
@@ -225,8 +191,6 @@ public class UniEditActivity extends AppCompatActivity
                 return false;
             }
         });
-
-
 
 
         MAINContent.setOnTouchListener(this);
@@ -340,12 +304,38 @@ public class UniEditActivity extends AppCompatActivity
                 tv_rotation.setText(cur_rotation+"˚");
                 csb_scale.setCurProcess(cur_scale);
                 tv_scale.setText((int)(view.getScaleX()*100)+"%");
-
                 // 将物体放置到左侧中心
+            }
+        });
 
+        FLOATCTRL.setOnTouchListener(new View.OnTouchListener() {
+            int lastx_,lasty_;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int rawX = (int) event.getRawX();
+                int rawY = (int) event.getRawY();
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastx_ = rawX;
+                        lasty_ = rawY;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int offsetX = rawX - lastx_;
+                        int offsetY = rawY - lasty_;
+                        ((LinearLayout)FLOATCTRL.getParent()).scrollBy(-offsetX, -offsetY);
+                        lastx_ = rawX;
+                        lasty_ = rawY;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return true;
             }
         });
     }
+
+
 
     // 初始化Menu
     private void setMenu(Context context)
@@ -363,8 +353,10 @@ public class UniEditActivity extends AppCompatActivity
         mAdapter.update(pkg.items);
     }
 
+    long firstTime=0;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         int rawX = (int) event.getRawX();
         int rawY = (int) event.getRawY();
 
@@ -372,13 +364,22 @@ public class UniEditActivity extends AppCompatActivity
             case MotionEvent.ACTION_DOWN:
                 lastX = rawX;
                 lastY = rawY;
+                long secondTime= System.currentTimeMillis();
+                if (secondTime-firstTime < 200) //点击两次
+                {
+                    CAVANS.setScaleX(1);
+                    CAVANS.setScaleY(1);
+                    ((RelativeLayout)CAVANS.getParent()).scrollTo(0, 0);
+                }
+                Log.i("Touch","按下");
+                firstTime = secondTime;
                 break;
             case MotionEvent.ACTION_MOVE:
 
                 int offsetX = rawX - lastX;
                 int offsetY = rawY - lastY;
 
-                if(!isDrawerOpen)
+                if(!isDrawerOpen && !mMangeer.isPlaying())
                     MAINContent.scrollBy(-offsetX, -offsetY);
 
                 lastX = rawX;
@@ -400,7 +401,7 @@ public class UniEditActivity extends AppCompatActivity
         float scaleY = (float)  CAVANS.getScaleY()*scale2Translaform ;
 
 
-        if(!isDrawerOpen)
+        if(!isDrawerOpen && !mMangeer.isPlaying())
             if (scaleX < 0.5) scaleX = scaleY = 0.5f;
             if (scaleX > 2)  scaleY = scaleX = 2;
             SCALE_FACTOR = scaleX;
