@@ -96,24 +96,43 @@ public class UNIElementViewManager {
 
     }
 
+    /**
+     * 获取当前Uni frame 的ID
+     * @return 返回当前的帧的ID数值
+     */
     public Integer getFrameID()
     {
         return frameID;
     }
 
+
+    /**
+     * 获取是否还有下一帧
+     * @return <tt>true</tt> 还有下一帧
+     */
     public Boolean hasNextFrame()
     {
         return hasNext;
     }
 
+    /**
+     * 是否正在Cavans中进行UNI帧的播放
+     * @return <tt>true</tt> 正在播放
+     */
     public Boolean isPlaying(){return is_playing;}
 
 
     /**
-     * 设置Manager 所要使用的控制单元
-     * @param play 用于进行播放 / 新增 功能的按键
-     * @param next 用于执行 "下一帧" 的 按钮
-     * @param prev 用于执行 "上一帧" 的 按钮
+     * 设置控制 Manager 的外部按钮，并在此处进行按钮的事件绑定<br>
+     * 并在 forbidAllBotton 处进行按钮的禁用设置<br>
+     * 在 updateAllBotton 处进行按钮的更新设置
+     *
+     * @param play 播放/暂停 按钮
+     * @param next 请求下一帧按钮设置
+     * @param prev 请求上一帧按钮设置
+     * @param save 请求保存按钮设置
+     * @param dele 请求删除按钮设置
+     * @param inse 请求插入或添加按钮设置
      */
     public void setCtrlButtonGroup(@NonNull Button play,
                                    @NonNull Button next,
@@ -122,6 +141,7 @@ public class UNIElementViewManager {
                                    @NonNull Button dele,
                                    @NonNull Button inse)
     {
+
        bnt_ctrl_play=play;
        bnt_ctrl_prev=prev;
        bnt_ctrl_next=next;
@@ -129,8 +149,7 @@ public class UNIElementViewManager {
        bnt_ctrl_dele=dele;
        bnt_ctrl_inse=inse;
 
-       forbidAllBotton();
-
+       forbidAllBotton();  // 禁用所有按钮
 
        bnt_ctrl_next.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -518,7 +537,7 @@ public class UNIElementViewManager {
         }
         if (bnt_ctrl_save!=null)
         {
-            if (true) // TODO: 能保存的条件
+            if (mCanvans.getChildCount()!=0) // TODO: 能保存的条件
             {
                 bnt_ctrl_save.setEnabled(true);
                 bnt_ctrl_save.setBackgroundResource(R.drawable.ic_save_grey_900_24dp);
@@ -533,7 +552,7 @@ public class UNIElementViewManager {
         }
         if (bnt_ctrl_dele!=null)
         {
-            if (true) // TODO: 能删除的条件
+            if (frameID!=0) // TODO: 能删除的条件
             {
                 bnt_ctrl_dele.setEnabled(true);
                 bnt_ctrl_dele.setBackgroundResource(R.drawable.ic_delete_grey_900_24dp);

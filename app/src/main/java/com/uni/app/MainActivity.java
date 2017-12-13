@@ -70,9 +70,6 @@ public class MainActivity extends AppCompatActivity {
 //        l.add("XXXX");
 //        l.add("XXXX");
 
-
-
-
         mAdapter = new UNIFrameAdapter<UNIFrame>(this);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
