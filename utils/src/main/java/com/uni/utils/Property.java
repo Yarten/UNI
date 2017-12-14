@@ -88,7 +88,7 @@ public class Property
      */
     public Property clone()
     {
-        return new Property(ID, width, height, x, y, opacity, mode);
+        return new Property(ID, width, height, x, y, opacity, rotation, mode);
     }
 
     private static int IDCursor = 0;

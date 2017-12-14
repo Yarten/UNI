@@ -40,6 +40,7 @@ import java.util.List;
 
 public class UNIElementViewManager {
 
+    //region 构造器
     /**
      * 用于维护时序的frameID
      * frameID 将从 0 开始计数
@@ -96,6 +97,15 @@ public class UNIElementViewManager {
 
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        //注销EventBus
+        EventBus.getDefault().unregister(this);
+        super.finalize();
+    }
+    //endregion
+
+    //region Getter
     /**
      * 获取当前Uni frame 的ID
      * @return 返回当前的帧的ID数值
@@ -116,12 +126,13 @@ public class UNIElementViewManager {
     }
 
     /**
-     * 是否正在Cavans中进行UNI帧的播放
+     * 是否正在Canvas中进行UNI帧的播放
      * @return <tt>true</tt> 正在播放
      */
     public Boolean isPlaying(){return is_playing;}
+    //endregion
 
-
+    //region 捆绑事件处理
     /**
      * 设置控制 Manager 的外部按钮，并在此处进行按钮的事件绑定<br>
      * 并在 forbidAllBotton 处进行按钮的禁用设置<br>
@@ -165,7 +176,7 @@ public class UNIElementViewManager {
             Toast.makeText(mContext,"play",Toast.LENGTH_SHORT).show();
             if (!is_playing) //查询服务器中是否已经有这一个 uni frame
             {
-                resetCavans();
+                resetCanvas();
                 UNIView view = new UNIView(mContext);
                 ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                         , ViewGroup.LayoutParams.MATCH_PARENT);
@@ -218,27 +229,26 @@ public class UNIElementViewManager {
                             dialog.dismiss();
                         }
                     })
-                    .setPositiveButton("确认",null).create();
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!edit.getText().toString().isEmpty()){
+                                saveCanvas(); // 保存全部
+                                Brief b = new Brief();
+                                b.title = edit.getText().toString();
+                                b.thumb = GraphicsTools.getShotCut(mCanvans);
+                                CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
+                            }
+                            else {
+                                edit.setError("不能为空");
+                            }
+                        }
+                    }).create();
 
             @Override
             public void onClick(View v) {
                 edit.setHint("UNI的名字");
                 dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    if (!edit.getText().toString().isEmpty()){
-                        saveCavans(); // 保存全部
-                        Brief b = new Brief();
-                        b.title = edit.getText().toString();
-                        b.thumb = GraphicsTools.getShotCut(mCanvans);
-                        CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
-                    }
-                    else {
-                        edit.setError("不能为空");
-                    }
-                    }
-                });
             }
         });
     }
@@ -339,57 +349,57 @@ public class UNIElementViewManager {
         return current_waiting_added_element.size() > 0;
     }
     public UNIElementView getTopWaitingItem(){return current_waiting_added_element.get(0);}
+    //endregion
 
-
+    //region 画布管理
     /**
      * 实例化添加到 "等待添加列表" 的元素
      * @param x 最终位置的x值 但对batch add 来说应该时质点 x
      * @param y 最终位置的y值 但对batch add 来说应该时质点 y
      */
-    public void addToCavansFromMenu(int x, int y)
+    public void addToCanvasFromMenu(int x, int y)
     {
         for (UNIElementView ori: current_waiting_added_element)
         {
             UNIElementView mUniViewItem = ori.clone(mContext);
-                    //new UNIElementView(mContext);
-
-            mUniViewItem.setPositionTo(x,y); // TODO batch 添加时应该区别最终位置
-         //   mUniViewItem.setImageBitmap(ori.mThumb);
-
-
-            // 为每一个添加到cavans 的元素
-            // 绑定 拖拽事件
-            mUniViewItem.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    current_selected_element.clear();
-                    current_selected_element.add((UNIElementView)v);
-                    ClipData data =  ClipData.newPlainText("ID","");
-                    v.startDrag(data,UNIDragShadowBuilder.fromUNI(mContext,(UNIElementView)v),null,0);
-                    return false;
-                }
-            });
-            // 绑定 点击事件
-            mUniViewItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    current_selected_element.clear();
-                    current_selected_element.add((UNIElementView)v);
-                    mOnUniItemClickLitener.onUniItemClick((UNIElementView)v);
-                }
-            });
-
+            addElementView(mUniViewItem, x, y);
             current_added_element.add(mUniViewItem);
-            mCanvans.addView(mUniViewItem);
             CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb, mUniViewItem.mUrl);
         }
         current_waiting_added_element.clear();
     }
 
+    private void addElementView(UNIElementView view, int x, int y)
+    {
+        view.setPositionTo(x, y);
+
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                current_selected_element.clear();
+                current_selected_element.add((UNIElementView)v);
+                ClipData data =  ClipData.newPlainText("ID","");
+                v.startDrag(data,UNIDragShadowBuilder.fromUNI(mContext,(UNIElementView)v),null,0);
+                return false;
+            }
+        });
+
+        view.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            current_selected_element.clear();
+            current_selected_element.add((UNIElementView)v);
+            mOnUniItemClickLitener.onUniItemClick((UNIElementView)v);
+            }
+        });
+
+        mCanvans.addView(view);
+    }
+
     /**
-     * 保存Cavans上所有的元素
+     * 保存Canvas上所有的元素
      */
-    private void saveCavans() {
+    private void saveCanvas() {
         for (UNIElementView uni: current_added_element) {
             CAN.DataBus.updateElement(frameID,uni.mProperty);
         }
@@ -399,7 +409,7 @@ public class UNIElementViewManager {
     /**
      * 重置画板
      */
-    private void resetCavans()
+    private void resetCanvas()
     {
 
         // 恢复缩放界面
@@ -415,7 +425,9 @@ public class UNIElementViewManager {
         current_waiting_added_element.clear();
         current_selected_element.clear();
     }
+    //endregion
 
+    //region 帧按钮管理
     /**
      * 请求上一帧
      */
@@ -424,8 +436,8 @@ public class UNIElementViewManager {
         if (frameID > 0)
         {
             forbidAllBotton();
-            frameID--;
-            CAN.DataBus.requireUpdate(frameID);
+            saveCanvas();
+            CAN.DataBus.requireUpdate(--frameID);
         }
     }
 
@@ -436,8 +448,8 @@ public class UNIElementViewManager {
     {
         if (hasNext) {
             forbidAllBotton();
-            frameID++;
-            CAN.DataBus.requireUpdate(frameID);
+            saveCanvas();
+            CAN.DataBus.requireUpdate(++frameID);
         }
     }
 
@@ -449,10 +461,8 @@ public class UNIElementViewManager {
     {
         forbidAllBotton();
         // 通知服务
-        CAN.DataBus.addFrame(frameID);
-        frameID ++;
-        resetCavans();
-
+        saveCanvas();
+        CAN.DataBus.addFrame(++frameID);
     }
 
     /**
@@ -461,19 +471,13 @@ public class UNIElementViewManager {
     public void deleteCurrentFrame()
     {
         forbidAllBotton();
-        if (hasNext)  {
-            CAN.DataBus.requireUpdate(frameID+1);
-        }
-        else{
-            // 重置界面
-            resetCavans();
-        }
         CAN.DataBus.deleteFrame(frameID);
-
     }
+    //endregion
 
+    //region 按钮事件
     /**
-     * Cavans 中每一个 item 的点击接口
+     * Canvas 中每一个 item 的点击接口
      */
 
     public interface OnUniItemClickLitener
@@ -559,15 +563,14 @@ public class UNIElementViewManager {
             }
         }
     }
+    //endregion
 
-
-
+    //region 订阅者
     /**
      * UNIEditor中用于接接收管理器发来的属性，进行画布更新
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updateCanvas(CAN.Package.EditorUpdate pkg)
-    {
+    public void updateCanvas(CAN.Package.EditorUpdate pkg) {
         FrameProperty frameProperty = pkg.frameProperty;
 
         // TODO: 加上帧的另外两个属性的设置：与上一帧的距离，当前帧的停留时间。
@@ -576,24 +579,17 @@ public class UNIElementViewManager {
         //更新按钮
         updateAllBotton();
         // 清空画板
-        resetCavans();
+        resetCanvas();
         // 更新帧号
-        ((TextView)mCanvans.findViewById(R.id.tv_editor_frameID)).setText(frameID+"");
+        ((TextView) ((RelativeLayout) mCanvans.getParent()).findViewById(R.id.tv_editor_frameID)).setText(frameID + "");
 
-        for (int i = 0;i < pkg.props.size(); i++)
-        {
+        for (int i = 0; i < pkg.props.size(); i++) {
             UNIElementView u = new UNIElementView(mContext);
-            u.setImageBitmap(pkg.images.get(i));
-            u.mProperty = pkg.props.get(i);
+            u.setImageBitmap(pkg.images.valueAt(i));
+            u.mProperty = pkg.props.valueAt(i).clone();
+            addElementView(u, u.mProperty.x, u.mProperty.y);
+            current_added_element.add(u);
         }
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        //注销EventBus
-        EventBus.getDefault().unregister(this);
-        super.finalize();
-    }
-
-
+    //endregion
 }

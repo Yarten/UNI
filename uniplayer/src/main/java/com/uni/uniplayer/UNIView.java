@@ -57,7 +57,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
     //region 渲染线程管理
     private boolean isRunning = false;
     private boolean isFinishRunning = false;
-    private boolean isPlay = true;
+    private boolean isPlay = false;
     private long currentTime = 0;
     private long lastTime = 0;
     private long rateTime = 0;

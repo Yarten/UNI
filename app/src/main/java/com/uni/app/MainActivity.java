@@ -16,6 +16,7 @@ import com.stone.vega.library.VegaLayoutManager;
 import com.uni.uniplayer.UNIFrame;
 import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
+import com.uni.utils.CAN;
 import com.uni.utils.FileUtils;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.GraphicsTools.statusBar;
@@ -45,6 +46,20 @@ public class MainActivity extends AppCompatActivity {
         init();
         evenBinding();
         makeSomeNoise();
+
+//        new Thread()
+//        {
+//            @Override
+//            public void run() {
+//                try
+//                {
+//                    Thread.sleep(20000);
+//                }
+//                catch (Exception e){}
+//                CAN.Control.requireMainMenu(0, 10);
+//            }
+//        }.start();
+
     }
 
 
@@ -56,21 +71,21 @@ public class MainActivity extends AppCompatActivity {
 
         List<UNIFrame> ls = new ArrayList<>();
 
-        List<String> l = new ArrayList<>();
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
-        l.add("XXXX");
+//        List<String> l = new ArrayList<>();
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
+//        l.add("XXXX");
 
-        mAdapter = new UNIFrameAdapter<String>(this,l);
+        mAdapter = new UNIFrameAdapter<UNIFrame>(this,ls);
 
         mRecyclerView = findViewById(R.id.rv_mainactivity_framelist);
 
@@ -160,13 +175,14 @@ public class MainActivity extends AppCompatActivity {
 
             Bitmap image = BitmapFactory.decodeResource(resources, elements[i].sourceID);
             GraphicsTools.saveToLocal(imageDir, elements[i].name, image);
+            Bitmap tmp = GraphicsTools.loadFromLocal(imageDir, elements[i].name);
             GraphicsTools.saveToLocal(root, "thumb", image);
 
             YAMLParser parser = new YAMLParser(root, elements[i].name + ".yaml");
             parser.setBrief("AA", "BB", "12-11", "System/" + elements[i].name, "Demo");
             parser.addFrame(0, 0);
             Property property = new Property();
-            parser.addElement(property, "System/" + elements[i].name);
+            parser.addElement(property, "Image/" + elements[i].name);
             parser.saveYAML();
         }
     }

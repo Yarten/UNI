@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.WindowDecorActionBar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -95,6 +96,7 @@ public class GraphicsTools {
 
         try {
             File file = new File(dir, name + ".png");
+            Log.i("Load image",file.getName()+" "+file.exists()+"");
             if(file.exists())
                 image = BitmapFactory.decodeFile(file.getAbsolutePath());
         }

@@ -25,7 +25,7 @@ class FrameManager
 
     public List<Brief> getFrames()
     {
-        File root = context.getFilesDir();
+        File root = context.getCacheDir();
         File[] dirs = root.listFiles();
         List<Brief> items = new LinkedList<>();
 
@@ -36,6 +36,7 @@ class FrameManager
             {
                 String name = dir.getName();
                 Brief brief = getBrief(dir, name);
+                if(brief == null) continue;
                 items.add(brief);
             }
         }
@@ -49,7 +50,7 @@ class FrameManager
         if(!yaml.loadYAML()) return null;
 
         Brief brief = yaml.getBrief();
-        brief.thumb = GraphicsTools.loadFromLocal(dir, "thumb.png");
+        brief.thumb = GraphicsTools.loadFromLocal(dir, "thumb");
 
         return brief;
     }

@@ -15,6 +15,7 @@ import com.uni.uniplayer.UNIFrame;
 import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
+import com.uni.utils.FileUtils;
 import com.yarten.unimanager.UNIManager;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -36,27 +37,34 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
     UpdateHandler mHandler;
 
     public UNIFrameAdapter(Context context){
-        mList = null;
-        mContext = context;
-        mHandler = new UpdateHandler();
+        this(context, null);
     }
 
-    public UNIFrameAdapter(Context context,List<E> list_){
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        CAN.logout(this);
+    }
+
+    public UNIFrameAdapter(Context context, List<E> list_){
         mList = list_;
         mContext = context;
+        mHandler = new UpdateHandler();
+        CAN.login(this);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void updateMainMenu(CAN.Package.Menu.Reply pkg)
     {
+        if(pkg.what != CAN.Package.Menu.Type.MainMenu) return;
         List<Brief> items = pkg.items;
 
         // TODO: 临时的操作：直接在这里加载UNIFrame
         for(Brief item : items)
         {
-            File dir = mContext.getDir(mContext.getCacheDir() + "/" + item.title, Context.MODE_PRIVATE);
+            File dir = FileUtils.instance.getCacheDir(item.title);
             UNIFrame uniFrame = UNIManager.instance.getUNIFrame(dir, item.title);
-            mList.add((E)uniFrame);
+            mList.add((E)uniFrame.clone());
         }
 
         mHandler.sendEmptyMessage(0);
@@ -82,7 +90,7 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         holder.title.setText(mList.get(position).toString());
-//        holder.uniView.setUNIFrame((UNIFrame) mList.get(position));
+        holder.uniView.setUNIFrame((UNIFrame) mList.get(position));
 
 
         if (mOnItemClickLitener != null) {

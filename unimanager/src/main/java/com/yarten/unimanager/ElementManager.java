@@ -69,10 +69,11 @@ class ElementManager
         if(loaded.containsKey(url))
             return loaded.get(url);
 
-        Path path = get(url);
-        if(path == null) return null;
+        Path rootPath = get(url);
+        File imageDir = FileUtils.instance.getDir(rootPath.dir, "Images");
+        if(rootPath == null) return null;
 
-        YAMLParser yaml = new YAMLParser(path.dir, path.name + ".yaml");
+        YAMLParser yaml = new YAMLParser(rootPath.dir, rootPath.name + ".yaml");
         if(!yaml.loadYAML()) return null;
 
         UNIElement element = new UNIElement();
@@ -87,8 +88,8 @@ class ElementManager
             while(yaml.hasNextElement() != -1)
             {
                 Property property = yaml.getElement();
-                path = get(yaml.getElementUrl());
-                Bitmap image = GraphicsTools.loadFromLocal(path.dir, path.name);
+                Path path = get(yaml.getElementUrl());
+                Bitmap image = GraphicsTools.loadFromLocal(imageDir, path.name);
                 element.addElement(property.ID, image, property);
             }
         }
@@ -100,8 +101,8 @@ class ElementManager
 
     public Brief getBrief(String url)
     {
-        if(cache.containsKey(url))
-            return cache.get(url);
+    //    if(cache.containsKey(url))
+    //        return cache.get(url);
 
         Path path = get(url);
         if(path == null) return null;
@@ -138,7 +139,7 @@ class ElementManager
         else if(source.equals("Image"))
         {
             // 加载UNI元素局部路径文件夹的原子图像。
-            path.name = "Images/" + name;
+            path.name = name;
             return path;
         }
         else

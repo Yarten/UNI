@@ -259,7 +259,7 @@ public class YAMLParser {
                    Double rotation = (Double) (elementMap.get("rotation"));
                    Property.Mode mode = (Property.Mode) elementMap.get("mode");
                    url = (String) elementMap.get("url");
-                   Property p = new Property(Id, x, y, height, width, opacity.floatValue(), rotation.floatValue(), mode);
+                   Property p = new Property(Id, width, height, x, y, opacity.floatValue(), rotation.floatValue(), mode);
                    elementList.add(new MProperty(p, url));
                    if (Id > mMaxElementId) mMaxElementId = Id;
                }

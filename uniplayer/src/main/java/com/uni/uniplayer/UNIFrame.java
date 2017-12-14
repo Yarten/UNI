@@ -21,6 +21,16 @@ public class UNIFrame
 
     private Brief brief;
 
+    public UNIFrame clone()
+    {
+        UNIFrame copy = new UNIFrame();
+        copy.elements = elements;
+        copy.res = res;
+        copy.timeTable = timeTable;
+        copy.brief = brief;
+        return copy;
+    }
+
     public boolean play()
     {
         for(UNIElement UNIElement : elements)
@@ -53,9 +63,10 @@ public class UNIFrame
 
     public void init()
     {
-        elements.clear();
-        res.clear();
-        timeTable.clear();
+        elements = new ArrayList<>();
+        res = new ArrayList<>();
+        timeTable = new TimeTable();
+        brief = new Brief();
     }
 
     public void setBrief(Brief brief)
@@ -73,7 +84,8 @@ public class UNIFrame
         if(id >= elements.size())
         {
             elements.add(UNIElement);
-            Bitmap bitmap = Bitmap.createBitmap(UNIElement.width, UNIElement.height, Bitmap.Config.ARGB_8888);
+         //   Bitmap bitmap = Bitmap.createBitmap(UNIElement.width, UNIElement.height, Bitmap.Config.ARGB_8888);
+            Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
             res.add(bitmap);
         }
 

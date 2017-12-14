@@ -119,7 +119,7 @@ public class UNICache
         keyFrame.update(ID, property);
     }
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
+    @Subscribe(threadMode = ThreadMode.POSTING)
     public void UpdateElement(CAN.Package.ElementRequest pkg)
     {
         switch (pkg.what)
@@ -150,9 +150,8 @@ public class UNICache
             case Delete:
                 deleteFrame(pkg.which);
                 break;
-            case Get:
-                getFrame(pkg.which);
-                break;
         }
+
+        getFrame(pkg.which);
     }
 }

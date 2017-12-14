@@ -174,7 +174,7 @@ public class UniEditActivity extends AppCompatActivity
                         return true;
                     case DragEvent.ACTION_DROP:
                         if (mMangeer.isWaitToPlace()) {
-                            mMangeer.addToCavansFromMenu((int)event.getX(),(int)event.getY());
+                            mMangeer.addToCanvasFromMenu((int)event.getX(),(int)event.getY());
                         }
                         else {
                             mMangeer.batchMove(event.getX()-startPoint.x,
