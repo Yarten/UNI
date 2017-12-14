@@ -36,7 +36,7 @@ public class Property
 
     public Property(int ID)
     {
-        this(ID, 0, 0, 0, 0,1, 1.0f, Mode.Linear);
+        this(ID, 0, 0, 0, 0, 1,1, 1.0f, Mode.Linear);
     }
 
     public Property(int width, int height, int x, int y)
@@ -93,6 +93,11 @@ public class Property
         return new Property(ID, width, height, x, y, scale, opacity, rotation, mode);
     }
 
+    public Property clone(int ID)
+    {
+        return new Property(ID, width, height, x, y, scale, opacity, rotation, mode);
+    }
+
     private static int IDCursor = 0;
 
     /**
@@ -123,8 +128,8 @@ public class Property
      */
     public static Property interpolation(Property last, Property next, long t, long duration)
     {
-        if(t < 0) return last;
-        if(t > duration) return next;
+        if(t <= 0) return last;
+        if(t >= duration || duration == 0) return next;
 
         Interpolator interpolator = pickInterpolator(next.mode);
         float alpha = interpolator.getInterpolation(t * 1.0f / duration);

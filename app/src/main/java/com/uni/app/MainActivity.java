@@ -47,19 +47,7 @@ public class MainActivity extends AppCompatActivity {
         evenBinding();
         makeSomeNoise();
 
-//        new Thread()
-//        {
-//            @Override
-//            public void run() {
-//                try
-//                {
-//                    Thread.sleep(20000);
-//                }
-//                catch (Exception e){}
-//                CAN.Control.requireMainMenu(0, 10);
-//            }
-//        }.start();
-
+        CAN.Control.requireMainMenu(0, 10);
     }
 
 
@@ -110,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 if(uniView.isPlaying())
                 {
                     uniView.stop();
+                    uniView.play();
                 }
                 else uniView.play();
             }
@@ -181,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             YAMLParser parser = new YAMLParser(root, elements[i].name + ".yaml");
             parser.setBrief("AA", "BB", "12-11", "System/" + elements[i].name, "Demo");
             parser.addFrame(0, 0);
-            Property property = new Property();
+            Property property = new Property(0);
             parser.addElement(property, "Image/" + elements[i].name);
             parser.saveYAML();
         }

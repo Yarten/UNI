@@ -251,6 +251,7 @@ public class TimeTable
                 if(isLoop)
                 {
                     play();
+                    return false;
                 }
                 else
                 {

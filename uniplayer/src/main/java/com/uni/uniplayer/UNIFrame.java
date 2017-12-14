@@ -2,6 +2,7 @@ package com.uni.uniplayer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 import com.uni.utils.*;
@@ -55,7 +56,15 @@ public class UNIFrame
 
             Property state = timeTable.render(elementId);
             state.setPaint(paint);
-            canvas.drawBitmap(bitmap, state.x, state.y, paint);
+
+            if(state.scale != 1.0)
+            {
+                Matrix matrix = new Matrix();
+                matrix.postScale(state.scale, state.scale);
+                Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+                canvas.drawBitmap(resized, state.x, state.y, paint);
+            }
+            else canvas.drawBitmap(bitmap, state.x, state.y, paint);
         }
 
         return isEnd;
@@ -85,7 +94,7 @@ public class UNIFrame
         {
             elements.add(UNIElement);
          //   Bitmap bitmap = Bitmap.createBitmap(UNIElement.width, UNIElement.height, Bitmap.Config.ARGB_8888);
-            Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+            Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
             res.add(bitmap);
         }
 

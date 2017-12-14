@@ -20,7 +20,7 @@ public class FrameProperty {
 
     public FrameProperty(int id)
     {
-        this(id, 1000, 0);
+        this(id, 0, 1000);
     }
 
     public FrameProperty(int id, long duration, long interval)

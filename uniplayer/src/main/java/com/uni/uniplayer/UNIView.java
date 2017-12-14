@@ -60,7 +60,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
     private boolean isPlay = false;
     private long currentTime = 0;
     private long lastTime = 0;
-    private long rateTime = 0;
+    private long rateTime = 40;
 
     class RenderThread extends Thread
     {

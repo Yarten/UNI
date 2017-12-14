@@ -60,11 +60,12 @@ public class UNIFrameAdapter <E> extends RecyclerView.Adapter<UNIFrameAdapter.VH
         List<Brief> items = pkg.items;
 
         // TODO: 临时的操作：直接在这里加载UNIFrame
+        mList.clear();
         for(Brief item : items)
         {
             File dir = FileUtils.instance.getCacheDir(item.title);
             UNIFrame uniFrame = UNIManager.instance.getUNIFrame(dir, item.title);
-            mList.add((E)uniFrame.clone());
+            mList.add((E)(uniFrame.clone()));
         }
 
         mHandler.sendEmptyMessage(0);

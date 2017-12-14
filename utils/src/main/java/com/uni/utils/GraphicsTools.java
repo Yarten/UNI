@@ -67,7 +67,8 @@ public class GraphicsTools {
         File file = new File(dir, name + ".png");
         if(file.exists())
             file.delete();
-        else try
+
+        try
         {
             file.createNewFile();
             FileOutputStream stream = new FileOutputStream(file);

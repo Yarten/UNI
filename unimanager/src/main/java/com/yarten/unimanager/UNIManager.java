@@ -3,6 +3,7 @@ package com.yarten.unimanager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 
 import com.example.vincent.yamlparser.YAMLParser;
 import com.uni.uniplayer.UNIElement;
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.security.Policy;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yfic on 2017/12/9.
@@ -132,6 +134,9 @@ public class UNIManager
         yaml.setBrief(brief.author, brief.description, brief.date, brief.url, brief.title);
 
         List<KeyFrame> keyFrames = cache.getFrames();
+        SparseIntArray idMap = new SparseIntArray();
+        int mapIndex = 0;
+
         for(KeyFrame keyFrame : keyFrames)
         {
             FrameProperty frameProperty = keyFrame.getFrameProperty();
@@ -142,7 +147,17 @@ public class UNIManager
             for(int i = 0, size = elements.size(); i < size; i++)
             {
                 KeyFrame.Element element = elements.valueAt(i);
-                yaml.addElement(element.property, element.url);
+
+                // ID 归一化
+                int oldID = element.property.ID;
+                int newID = idMap.indexOfValue(oldID);
+                if(newID < 0)
+                {
+                    idMap.put(mapIndex, oldID);
+                    newID = mapIndex++;
+                }
+
+                yaml.addElement(element.property.clone(newID), element.url);
             }
         }
 
