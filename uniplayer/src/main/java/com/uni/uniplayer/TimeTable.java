@@ -226,7 +226,7 @@ public class TimeTable
      * 该函数需要在每一个渲染周期中，在调用render前之前调用。
      *
      * @param deltaT 向前推动的时间间隔，为两帧间的间隔
-     * @return 返回是否播放结束
+     * @return 返回是否正在播放
      */
     public boolean nextDuration(long deltaT)
     {
@@ -251,7 +251,7 @@ public class TimeTable
                 if(isLoop)
                 {
                     play();
-                    return false;
+                    return true;
                 }
                 else
                 {

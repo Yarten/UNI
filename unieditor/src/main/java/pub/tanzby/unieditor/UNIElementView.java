@@ -51,8 +51,8 @@ public class UNIElementView extends AppCompatImageView {
     public void setProperty(Property prop)
     {
         mProperty = prop.clone();
-        setX(mProperty.x);
-        setY(mProperty.y);
+        setX(mProperty.x * GraphicsTools.dipScale());
+        setY(mProperty.y * GraphicsTools.dipScale());
         setScaleX(mProperty.scale);
         setScaleY(mProperty.scale);
         setVisibility(VISIBLE);
@@ -63,12 +63,11 @@ public class UNIElementView extends AppCompatImageView {
 
     private void updatePropoty()
     {
-        mProperty.x = (int)getX();
-        mProperty.y = (int)getY();
+        mProperty.x = (int)(getX() / GraphicsTools.dipScale());
+        mProperty.y = (int)(getY() / GraphicsTools.dipScale());
         mProperty.opacity = getAlpha();
         mProperty.scale = getScaleX();
         mProperty.rotation = getRotation();
-
     }
 
     public void setPositionTo(int x, int y)

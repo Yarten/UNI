@@ -38,7 +38,6 @@ public class UNIElement
 
     public void render(Canvas canvas, long deltaT)
     {
-        Paint paint = new Paint();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         timeTable.nextDuration(deltaT);
@@ -47,9 +46,7 @@ public class UNIElement
         {
             int elementId = timeTable.nextElement();
             Property state = timeTable.render(elementId);
-            Log.i("UNIElement", state.opacity + "");
-            state.setPaint(paint);
-            canvas.drawBitmap(res.get(elementId), state.x, state.y, paint);
+            state.draw(canvas, res.get(elementId));
         }
     }
 

@@ -359,10 +359,13 @@ public class UNIElementViewManager {
      */
     public void addToCanvasFromMenu(int x, int y)
     {
+        final int dipScale = GraphicsTools.dipScale();
+        final int halfLength = Property.ElementLength / 2;
+
         for (UNIElementView ori: current_waiting_added_element)
         {
             UNIElementView mUniViewItem = ori.clone(mContext);
-            addElementView(mUniViewItem, new Property(ori.mProperty.width,ori.mProperty.height,x,y));
+            addElementView(mUniViewItem, new Property(ori.mProperty.width,ori.mProperty.height, x / dipScale - halfLength,y / dipScale - halfLength));
             current_added_element.add(mUniViewItem);
             CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb, mUniViewItem.mUrl);
         }
@@ -473,6 +476,8 @@ public class UNIElementViewManager {
     {
         forbidAllBotton();
         CAN.DataBus.deleteFrame(frameID);
+        if(!hasNext && frameID != 0)
+            frameID--;
     }
     //endregion
 

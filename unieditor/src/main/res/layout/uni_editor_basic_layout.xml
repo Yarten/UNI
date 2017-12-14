@@ -17,8 +17,8 @@
 
         <RelativeLayout
             android:id="@+id/uniEditor_layout_cavans"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="1600dp"
+            android:layout_height="900dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
             android:layout_margin="20dp"

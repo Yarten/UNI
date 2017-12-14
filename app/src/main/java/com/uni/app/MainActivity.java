@@ -25,6 +25,7 @@ import com.uni.utils.Property;
 import com.yarten.unimanager.UNIManager;
 
 import java.io.File;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GraphicsTools.initDipScale(this);
         Permission.verifyExternalStoragePermissions(this);
         init();
         evenBinding();
@@ -116,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEditButtomClick(View view, int position) {
                 Intent nwIntend = new Intent(MainActivity.this,UniEditActivity.class);
+                UNIFrame uniFrame = (UNIFrame) mAdapter.getItem(position);
+                Brief brief = uniFrame.getBrief();
+                File dir = FileUtils.instance.getCacheDir(brief.title);
+                UNIManager.instance.loadUNIEditor(dir, brief.title);
                 startActivity(nwIntend);
             }
         });

@@ -40,34 +40,24 @@ public class UNIFrame
     }
 
     public boolean render(Canvas canvas, long deltaT) {
-        Paint paint = new Paint();
-
-        boolean isEnd = timeTable.nextDuration(deltaT);
+        boolean isPlaying = timeTable.nextDuration(deltaT);
+        float localScale = Property.FrameWidth * GraphicsTools.dipScale() / canvas.getWidth();
 
         while(timeTable.hasNextElement())
         {
             Log.i("UNIFrame", String.format("%d", deltaT));
             int elementId = timeTable.nextElement();
-            UNIElement UNIElement = elements.get(elementId);
+            UNIElement uniElement = elements.get(elementId);
             Bitmap bitmap = res.get(elementId);
 
             Canvas subcanvas = new Canvas(bitmap);
-            UNIElement.render(subcanvas, deltaT);
-
+            uniElement.render(subcanvas, deltaT);
+            Log.i("UNIFrame", canvas.getHeight() + " " + canvas.getWidth());
             Property state = timeTable.render(elementId);
-            state.setPaint(paint);
-
-            if(state.scale != 1.0)
-            {
-                Matrix matrix = new Matrix();
-                matrix.postScale(state.scale, state.scale);
-                Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-                canvas.drawBitmap(resized, state.x, state.y, paint);
-            }
-            else canvas.drawBitmap(bitmap, state.x, state.y, paint);
+            state.draw(canvas, bitmap);
         }
 
-        return isEnd;
+        return isPlaying;
     }
 
     public void init()
@@ -83,6 +73,8 @@ public class UNIFrame
         this.brief = brief;
     }
 
+    public Brief getBrief(){return brief;}
+
     public void addFrame(long interval, long duration)
     {
         timeTable.addFrame(interval, duration);
@@ -94,7 +86,7 @@ public class UNIFrame
         {
             elements.add(UNIElement);
          //   Bitmap bitmap = Bitmap.createBitmap(UNIElement.width, UNIElement.height, Bitmap.Config.ARGB_8888);
-            Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+            Bitmap bitmap = Bitmap.createBitmap(Property.ElementLength * GraphicsTools.dipScale(), Property.ElementLength * GraphicsTools.dipScale(), Bitmap.Config.ARGB_8888);
             res.add(bitmap);
         }
 

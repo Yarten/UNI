@@ -64,12 +64,15 @@ public class UNICache
     public void deleteFrame(int ID)
     {
         int size = frames.size();
-        if(ID == size-1)
+        if(ID == size-1 && ID != 0)
         {
             frames.get(ID-1).frameProperty.hasNext = false;
         }
 
         frames.remove(ID);
+
+        if(ID == 0)
+            addFrame(0, new FrameProperty(0));
     }
 
     public void getFrame(int ID)
@@ -149,6 +152,8 @@ public class UNICache
                 break;
             case Delete:
                 deleteFrame(pkg.which);
+                if(pkg.which == frames.size() && pkg.which != 0)
+                    pkg.which--;
                 break;
         }
 

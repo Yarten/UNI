@@ -73,7 +73,7 @@ public class YAMLParser {
 
     public void addFrame (long duration, long interval){
 
-        mFrames.add(new FrameProperty(mFrames.size()+1, duration, interval));
+        mFrames.add(new FrameProperty(mFrames.size(), duration, interval));
 
         ArrayList<MProperty> elementList = new ArrayList<>();
         mElements.add(elementList);
@@ -247,7 +247,7 @@ public class YAMLParser {
            Map<String, Object> ElementSet = (Map<String, Object>)UNIFrame.get("Elements");
            for(String key: ElementSet.keySet()){
                Map<String, Object> elementListMap = (Map<String, Object>) ElementSet.get(key);
-               ArrayList<MProperty> elementList = new ArrayList<MProperty>();
+               ArrayList<MProperty> elementList = new ArrayList<>();
 
                for(String subKey:elementListMap.keySet()){
                    Map<String, Object> elementMap = (Map<String, Object>) elementListMap.get(subKey);

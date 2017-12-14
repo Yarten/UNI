@@ -52,11 +52,14 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
     {
         this.uniFrame = uniFrame;
     }
+
+    public UNIFrame getUNIFrame(){return uniFrame;}
     //endregion
 
     //region 渲染线程管理
     private boolean isRunning = false;
-    private boolean isFinishRunning = false;
+    private boolean isFinishRunning = true;
+    private boolean isEnding = true;
     private boolean isPlay = false;
     private long currentTime = 0;
     private long lastTime = 0;
@@ -70,12 +73,13 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
             currentTime = getTime();
             lastTime = currentTime;
             isFinishRunning = false;
+            isEnding = false;
 
             while(true)
             {
                 synchronized (this)
                 {
-                    if(!isRunning) break;
+                    if(!isRunning || isEnding) break;
                     long deltaT = currentTime - lastTime;
                     lastTime = getTime();
                     if(isPlay) draw(deltaT);
@@ -106,6 +110,20 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
         lastTime = 0;
         isPlay = true;
         isRunning = true;
+
+        while(true)
+        {
+            synchronized (this)
+            {
+                if(isFinishRunning) break;
+            }
+
+            try
+            {
+                Thread.sleep(1);
+            } catch (Exception e){}
+        }
+
         renderThread.start();
     }
 
@@ -171,7 +189,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
         Canvas canvas = sfh.lockCanvas();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-        uniFrame.render(canvas, deltaT);
+        isEnding = !uniFrame.render(canvas, deltaT);
 
         sfh.unlockCanvasAndPost(canvas);
     }

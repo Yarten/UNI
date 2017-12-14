@@ -55,6 +55,19 @@ public class GraphicsTools {
         return (int) (dpValue * scale + 0.5f);
     }
 
+    private static int dipScaleParameter = 1;
+
+    public static void initDipScale(Context context)
+    {
+        dipScaleParameter = (int)context.getResources().getDisplayMetrics().density;
+    }
+
+    public static int dipScale()
+    {
+        return dipScaleParameter;
+    }
+
+
     /**
      * 保存图片，由manager调用
      * @param dir 保存的位置（如：cache目录，user目录等）

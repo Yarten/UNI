@@ -77,6 +77,10 @@ public class UNIManager
         return uniFrame;
     }
 
+    public void loadUNIEditor(File dir, String name)
+    {
+        loadYaml(dir, name + ".yaml", true);
+    }
 
     public boolean loadYaml(File dir, String yaml, boolean editMode)
     {

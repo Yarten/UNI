@@ -1,7 +1,11 @@
 package com.uni.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
@@ -19,6 +23,10 @@ public class Property
      * 用于指定不需要ID的临时属性（如插值得到的属性）
      */
     public static final int NaN = -1;
+
+    public static final int ElementLength = 100;
+    public static final int FrameWidth = 1600;
+    public static final int FrameHeight = 900;
 
     /**
      * 插值模式
@@ -85,6 +93,21 @@ public class Property
         paint.setAlpha((int)(opacity * 255));
     }
 
+    public void draw(Canvas canvas, Bitmap bitmap)
+    {
+        final Paint paint = new Paint();
+        paint.setAlpha((int)(opacity*255));
+
+        final Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        Log.i("Scale", scale + "");
+        matrix.postRotate(rotation);
+
+        Bitmap temp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+        canvas.drawBitmap(temp, x, y, paint);
+    }
+
+
     /**
      * 注意，属性的赋值多使用深拷贝
      */
@@ -136,12 +159,17 @@ public class Property
 
 
         Property mid = new Property(NaN);
-        mid.x = (int)(last.x + (next.x-last.x) * alpha);
-        mid.y = (int)(last.y + (next.y-last.y) * alpha);
-        mid.opacity = last.opacity + (next.opacity-last.opacity) * alpha;
-        mid.scale = last.scale + (next.scale - next.scale) * alpha;
+        mid.x = (int)calculate(last.x, next.x, alpha);
+        mid.y = (int)calculate(last.y, next.y, alpha);
+        mid.opacity = calculate(last.opacity, next.opacity, alpha);
+        mid.scale = calculate(last.scale, next.scale, alpha);
 
         return mid;
+    }
+
+    private static float calculate(float last, float next, float alpha)
+    {
+        return last + (next - last) * alpha;
     }
 
     private static Interpolator pickInterpolator(Mode mode)
