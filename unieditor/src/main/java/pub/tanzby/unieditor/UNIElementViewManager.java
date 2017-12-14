@@ -377,6 +377,8 @@ public class UNIElementViewManager {
 
         view.setProperty(p);
 
+
+
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -398,6 +400,7 @@ public class UNIElementViewManager {
         });
 
         mCanvans.addView(view);
+        this.updateAllBotton();
     }
 
     /**
