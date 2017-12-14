@@ -24,6 +24,7 @@ import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
+import com.uni.utils.Property;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -335,8 +336,7 @@ public class UNIElementViewManager {
     {
         for(UNIElementView u: current_selected_element)
         {
-            u.setScaleX(scale);
-            u.setScaleY(scale);
+            u.SetScale(scale);
         }
     }
 
@@ -362,16 +362,17 @@ public class UNIElementViewManager {
         for (UNIElementView ori: current_waiting_added_element)
         {
             UNIElementView mUniViewItem = ori.clone(mContext);
-            addElementView(mUniViewItem, x, y);
+            addElementView(mUniViewItem, new Property(ori.mProperty.width,ori.mProperty.height,x,y));
             current_added_element.add(mUniViewItem);
             CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb, mUniViewItem.mUrl);
         }
         current_waiting_added_element.clear();
     }
 
-    private void addElementView(UNIElementView view, int x, int y)
+    private void addElementView(UNIElementView view, Property p)
     {
-        view.setPositionTo(x, y);
+
+        view.setProperty(p);
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -587,7 +588,7 @@ public class UNIElementViewManager {
             UNIElementView u = new UNIElementView(mContext);
             u.setImageBitmap(pkg.images.valueAt(i));
             u.mProperty = pkg.props.valueAt(i).clone();
-            addElementView(u, u.mProperty.x, u.mProperty.y);
+            addElementView(u, u.mProperty);
             current_added_element.add(u);
         }
     }

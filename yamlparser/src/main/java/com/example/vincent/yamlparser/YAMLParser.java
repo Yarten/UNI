@@ -179,6 +179,7 @@ public class YAMLParser {
                     elementMap.put("width", element.property.width);
                     elementMap.put("opacity", element.property.opacity);
                     elementMap.put("rotation",element.property.rotation);
+                    elementMap.put("scale", element.property.scale);
                     elementMap.put("mode",element.property.mode);
                     elementMap.put("url", element.url);
 
@@ -257,9 +258,10 @@ public class YAMLParser {
                    int width = (Integer) elementMap.get("width");
                    Double opacity = (Double) ( elementMap.get("opacity"));
                    Double rotation = (Double) (elementMap.get("rotation"));
+                   Double scale = (Double)(elementMap.get("scale"));
                    Property.Mode mode = (Property.Mode) elementMap.get("mode");
                    url = (String) elementMap.get("url");
-                   Property p = new Property(Id, width, height, x, y, opacity.floatValue(), rotation.floatValue(), mode);
+                   Property p = new Property(Id, width, height, x, y,scale.floatValue(), opacity.floatValue(), rotation.floatValue(), mode);
                    elementList.add(new MProperty(p, url));
                    if (Id > mMaxElementId) mMaxElementId = Id;
                }

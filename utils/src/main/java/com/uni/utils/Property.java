@@ -36,20 +36,20 @@ public class Property
 
     public Property(int ID)
     {
-        this(ID, 0, 0, 0, 0, 1.0f, Mode.Linear);
+        this(ID, 0, 0, 0, 0,1, 1.0f, Mode.Linear);
     }
 
     public Property(int width, int height, int x, int y)
     {
-        this(width, height, x, y, 1.0f, 0, Mode.Linear);
+        this(width, height, x, y,1, 1.0f, 0, Mode.Linear);
     }
 
-    public Property(int width, int height, int x, int y, float opacity, float rotation, Mode mode)
+    public Property(int width, int height, int x, int y, float scale, float opacity, float rotation, Mode mode)
     {
-        this(getIDCursor(), width, height, x, y, opacity, rotation, mode);
+        this(getIDCursor(), width, height, x, y, scale, opacity, rotation, mode);
     }
 
-    public Property(int ID, int width, int height, int x, int y, float opacity, float rotation, Mode mode)
+    public Property(int ID, int width, int height, int x, int y, float scale, float opacity, float rotation, Mode mode)
     {
         this.ID = ID;
         this.width = width;
@@ -57,6 +57,7 @@ public class Property
         this.x = x;
         this.y = y;
         this.opacity = opacity;
+        this.scale = scale;
         this.mode = mode;
         this.rotation = rotation;
     }
@@ -69,6 +70,7 @@ public class Property
     public int width;
     public int height;
     public float opacity;
+    public float scale;
     public Mode mode;
     public float rotation;
     //endregion
@@ -88,7 +90,7 @@ public class Property
      */
     public Property clone()
     {
-        return new Property(ID, width, height, x, y, opacity, rotation, mode);
+        return new Property(ID, width, height, x, y, scale, opacity, rotation, mode);
     }
 
     private static int IDCursor = 0;
@@ -132,6 +134,7 @@ public class Property
         mid.x = (int)(last.x + (next.x-last.x) * alpha);
         mid.y = (int)(last.y + (next.y-last.y) * alpha);
         mid.opacity = last.opacity + (next.opacity-last.opacity) * alpha;
+        mid.scale = last.scale + (next.scale - next.scale) * alpha;
 
         return mid;
     }

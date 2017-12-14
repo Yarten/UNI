@@ -18,7 +18,7 @@ public class UNIElementView extends AppCompatImageView {
     Property mProperty;
     Boolean  hasAddedToCavans;
     Bitmap   mThumb;
-    String mUrl;
+    String   mUrl;
 
     static int DEFAULT_WIDTH = 50;
     static String TAG = "UNIElementView";
@@ -48,21 +48,17 @@ public class UNIElementView extends AppCompatImageView {
 
     }
 
-    public void setPropertyAndBitmap(Property prop, Bitmap thumb)
+    public void setProperty(Property prop)
     {
-        if (this.getParent() == null){
-            Log.i(TAG+" reflashProperty"," 未添加到画板");
-            setVisibility(INVISIBLE);
-        }
-        else
-        {
-            mProperty = prop.clone();
-            setX(mProperty.x);
-            setY(mProperty.y);
-            setVisibility(VISIBLE);
-            setAlpha(mProperty.opacity);
-            setImageBitmap(mThumb = thumb);
-        }
+        mProperty = prop.clone();
+        setX(mProperty.x);
+        setY(mProperty.y);
+        setScaleX(mProperty.scale);
+        setScaleY(mProperty.scale);
+        setVisibility(VISIBLE);
+        setAlpha(mProperty.opacity);
+        setRotation(mProperty.rotation);
+        updatePropoty();
     }
 
     private void updatePropoty()
@@ -70,6 +66,9 @@ public class UNIElementView extends AppCompatImageView {
         mProperty.x = (int)getX();
         mProperty.y = (int)getY();
         mProperty.opacity = getAlpha();
+        mProperty.scale = getScaleX();
+        mProperty.rotation = getRotation();
+
     }
 
     public void setPositionTo(int x, int y)
@@ -97,6 +96,12 @@ public class UNIElementView extends AppCompatImageView {
     /**
      * 重写函数
      */
+
+    public void SetScale(float scale){
+        setScaleX(scale);
+        setScaleY(scale);
+        mProperty.scale = scale;
+    }
 
     @Override
     public void scrollTo(int x, int y) {
@@ -137,7 +142,7 @@ public class UNIElementView extends AppCompatImageView {
         UNIElementView copy = new UNIElementView(context);
         copy.setImageBitmap(mThumb);
         copy.setURL(mUrl);
-        copy.mProperty = mProperty;
+        copy.mProperty = mProperty.clone();
         return copy;
     }
 
