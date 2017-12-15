@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +31,7 @@ import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.GraphicsTools;
 import com.uni.utils.MenuButton.MenuButton;
+import com.uni.utils.Property;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -101,9 +103,10 @@ public class UniEditActivity extends AppCompatActivity
 
         setMenu(this);
         CAN.DataBus.requireMenu(10, 0);
-        CAN.DataBus.requireUpdate(0);
         mainEvenBinding();
     }
+
+    public static float LocalScale = 1.0f;
 
     /**
      * 元素初始化绑定
@@ -141,7 +144,7 @@ public class UniEditActivity extends AppCompatActivity
         ROOT.setScrimColor(Color.TRANSPARENT);
         CAN.login(this);
 
-
+        LocalScale = CAVANS.getWidth() * 1.0f / Property.FrameWidth;
     }
 
     /**
@@ -349,7 +352,9 @@ public class UniEditActivity extends AppCompatActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateMenu(CAN.Package.Menu.Reply pkg)
     {
+        LocalScale = CAVANS.getWidth() * 1.0f / Property.FrameWidth;
         mAdapter.update(pkg.items);
+        CAN.DataBus.requireUpdate(0);
     }
 
     long firstTime=0;

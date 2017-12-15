@@ -22,6 +22,7 @@ public class UNIElementView extends AppCompatImageView {
 
     static int DEFAULT_WIDTH = 50;
     static String TAG = "UNIElementView";
+    static float localScale = 1.0f;
 
     public UNIElementView(Context context) {
         super(context);
@@ -46,15 +47,16 @@ public class UNIElementView extends AppCompatImageView {
 
         setVisibility(INVISIBLE);
 
+        localScale = UniEditActivity.LocalScale;
     }
 
     public void setProperty(Property prop)
     {
         mProperty = prop.clone();
-        setX(mProperty.x * GraphicsTools.dipScale());
-        setY(mProperty.y * GraphicsTools.dipScale());
-        setScaleX(mProperty.scale);
-        setScaleY(mProperty.scale);
+        setX(mProperty.x * localScale);
+        setY(mProperty.y * localScale);
+        setScaleX(mProperty.scale * localScale);
+        setScaleY(mProperty.scale * localScale);
         setVisibility(VISIBLE);
         setAlpha(mProperty.opacity);
         setRotation(mProperty.rotation);
@@ -63,10 +65,10 @@ public class UNIElementView extends AppCompatImageView {
 
     private void updatePropoty()
     {
-        mProperty.x = (int)(getX() / GraphicsTools.dipScale());
-        mProperty.y = (int)(getY() / GraphicsTools.dipScale());
+        mProperty.x = (int)(getX() / localScale);
+        mProperty.y = (int)(getY() / localScale);
         mProperty.opacity = getAlpha();
-        mProperty.scale = getScaleX();
+        mProperty.scale = getScaleX() / localScale;
         mProperty.rotation = getRotation();
     }
 
@@ -99,7 +101,7 @@ public class UNIElementView extends AppCompatImageView {
     public void SetScale(float scale){
         setScaleX(scale);
         setScaleY(scale);
-        mProperty.scale = scale;
+        mProperty.scale = scale / localScale;
     }
 
     @Override

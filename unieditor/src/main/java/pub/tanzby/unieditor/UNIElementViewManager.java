@@ -1,37 +1,31 @@
 package pub.tanzby.unieditor;
 
-import android.annotation.SuppressLint;
+
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.CornerPathEffect;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FrameProperty;
 import com.uni.utils.GraphicsTools;
+import com.uni.utils.Playable;
 import com.uni.utils.Property;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Created by tan on 2017/12/8.
  *
@@ -178,12 +172,7 @@ public class UNIElementViewManager {
             if (!is_playing) //查询服务器中是否已经有这一个 uni frame
             {
                 resetCanvas();
-                UNIView view = new UNIView(mContext);
-                ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-                        , ViewGroup.LayoutParams.MATCH_PARENT);
-                view.setLayoutParams(lp);
-                view.setBackgroundColor(Color.GRAY);
-                mCanvans.addView(view);
+                CAN.Control.requirePlayer();
                 bnt_ctrl_play.setBackgroundResource(R.drawable.ic_pause_red_a400_24dp);
                 is_playing = true;
             }
@@ -239,6 +228,7 @@ public class UNIElementViewManager {
                                 b.title = edit.getText().toString();
                                 b.thumb = GraphicsTools.getShotCut(mCanvans);
                                 CAN.DataBus.commit(b,CAN.Package.EditorCommit.State.Save);
+                                ((UniEditActivity)mContext).finish();
                             }
                             else {
                                 edit.setError("不能为空");
@@ -359,13 +349,15 @@ public class UNIElementViewManager {
      */
     public void addToCanvasFromMenu(int x, int y)
     {
-        final int dipScale = GraphicsTools.dipScale();
-        final int halfLength = Property.ElementLength / 2;
+        final float localScale = UniEditActivity.LocalScale;
+        final int halfLength = Property.ElementLength / 2 * GraphicsTools.dipScale();
+        x = (int)(x / localScale - halfLength);
+        y = (int)(y / localScale - halfLength);
 
         for (UNIElementView ori: current_waiting_added_element)
         {
             UNIElementView mUniViewItem = ori.clone(mContext);
-            addElementView(mUniViewItem, new Property(ori.mProperty.width,ori.mProperty.height, x / dipScale - halfLength,y / dipScale - halfLength));
+            addElementView(mUniViewItem, new Property(ori.mProperty.width,ori.mProperty.height, x, y));
             current_added_element.add(mUniViewItem);
             CAN.DataBus.addElement(frameID,mUniViewItem.mProperty,mUniViewItem.mThumb, mUniViewItem.mUrl);
         }
@@ -374,10 +366,7 @@ public class UNIElementViewManager {
 
     private void addElementView(UNIElementView view, Property p)
     {
-
         view.setProperty(p);
-
-
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -599,6 +588,19 @@ public class UNIElementViewManager {
             addElementView(u, u.mProperty);
             current_added_element.add(u);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updatePlayer(CAN.Package.Player.Reply pkg)
+    {
+        Playable player = pkg.player;
+        View view = (View)player;
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
+                , ViewGroup.LayoutParams.MATCH_PARENT);
+        view.setLayoutParams(lp);
+        view.setBackgroundColor(Color.GRAY);
+        mCanvans.addView(view);
+        player.play();
     }
     //endregion
 }

@@ -41,19 +41,22 @@ public class UNIFrame
 
     public boolean render(Canvas canvas, long deltaT) {
         boolean isPlaying = timeTable.nextDuration(deltaT);
-        float localScale = Property.FrameWidth * GraphicsTools.dipScale() / canvas.getWidth();
+        float localScale = canvas.getWidth() * 1.0f / Property.FrameWidth;
 
         while(timeTable.hasNextElement())
         {
-            Log.i("UNIFrame", String.format("%d", deltaT));
             int elementId = timeTable.nextElement();
             UNIElement uniElement = elements.get(elementId);
             Bitmap bitmap = res.get(elementId);
 
             Canvas subcanvas = new Canvas(bitmap);
             uniElement.render(subcanvas, deltaT);
-            Log.i("UNIFrame", canvas.getHeight() + " " + canvas.getWidth());
-            Property state = timeTable.render(elementId);
+
+            Property state = timeTable.render(elementId).clone();
+            state.scale *= localScale;
+            state.x *= localScale;
+            state.y *= localScale;
+
             state.draw(canvas, bitmap);
         }
 

@@ -1,8 +1,11 @@
 package com.uni.uniplayer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
@@ -10,11 +13,13 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.uni.utils.Playable;
+
 /**
  * Created by yfic on 2017/11/19.
  */
 
-public class UNIView extends SurfaceView implements SurfaceHolder.Callback
+public class UNIView extends SurfaceView implements SurfaceHolder.Callback, Playable
 {
     //region 构造器
     private SurfaceHolder sfh;
@@ -160,6 +165,8 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
             try{ Thread.sleep(1);}
             catch (Exception e){Log.e("UNIView", e.toString());}
         }
+
+        setThumb();
     }
     //endregion
 
@@ -171,7 +178,7 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+        setThumb();
     }
 
     @Override
@@ -193,5 +200,29 @@ public class UNIView extends SurfaceView implements SurfaceHolder.Callback
 
         sfh.unlockCanvasAndPost(canvas);
     }
+
+    private void setThumb()
+    {
+        Canvas canvas = sfh.lockCanvas();
+        if(canvas == null) return;
+
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+        Matrix matrix = new Matrix();
+        Bitmap thumb = uniFrame.getBrief().thumb;
+        int canvasWidth = canvas.getWidth();
+        int canvasHeight = canvas.getHeight();
+        int thumbWidth = thumb.getWidth();
+        int thumbHeight = thumb.getHeight();
+
+        matrix.postScale(1.0f * canvasWidth / thumb.getWidth(), 1.0f * canvasHeight / thumb.getHeight());
+        Bitmap resized = Bitmap.createBitmap(thumb, 0, 0, thumbWidth, thumbHeight, matrix, false);
+
+        final Paint paint = new Paint();
+        canvas.drawBitmap(resized, 0, 0, paint);
+
+        sfh.unlockCanvasAndPost(canvas);
+    }
+
     //endregion
 }

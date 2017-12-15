@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent nwIntend = new Intent(MainActivity.this,UniEditActivity.class);
+                UNIManager.instance.loadEmptyEditor();
                 startActivity(nwIntend);
             }
         });

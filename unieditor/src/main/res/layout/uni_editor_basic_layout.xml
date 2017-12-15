@@ -17,13 +17,14 @@
 
         <RelativeLayout
             android:id="@+id/uniEditor_layout_cavans"
-            android:layout_width="1600dp"
-            android:layout_height="900dp"
+            android:layout_width="533dp"
+            android:layout_height="300dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
-            android:layout_margin="20dp"
-            android:background="#fff">
-        </RelativeLayout>
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="#fff"></RelativeLayout>
 
         <TextView
             android:id="@+id/tv_editor_frameID"

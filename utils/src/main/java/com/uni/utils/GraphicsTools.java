@@ -59,7 +59,7 @@ public class GraphicsTools {
 
     public static void initDipScale(Context context)
     {
-        dipScaleParameter = (int)context.getResources().getDisplayMetrics().density;
+        dipScaleParameter = (int)(context.getResources().getDisplayMetrics().density);
     }
 
     public static int dipScale()

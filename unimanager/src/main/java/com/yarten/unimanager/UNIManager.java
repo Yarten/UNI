@@ -1,5 +1,6 @@
 package com.yarten.unimanager;
 
+import android.animation.Keyframe;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.SparseArray;
@@ -8,6 +9,7 @@ import android.util.SparseIntArray;
 import com.example.vincent.yamlparser.YAMLParser;
 import com.uni.uniplayer.UNIElement;
 import com.uni.uniplayer.UNIFrame;
+import com.uni.uniplayer.UNIView;
 import com.uni.utils.Brief;
 import com.uni.utils.CAN;
 import com.uni.utils.FileUtils;
@@ -22,6 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.security.Key;
 import java.security.Policy;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +38,7 @@ public class UNIManager
 {
     public static UNIManager instance = new UNIManager();
 
+    //region 私有组件
     private UNIManager(){}
 
     private ElementManager elementManager = null;
@@ -50,7 +54,9 @@ public class UNIManager
     private Context context;
 
     private boolean hasInited = false;
+    //endregion
 
+    //region 构造器
     public void init(Context context)
     {
         if(hasInited) return;
@@ -69,12 +75,20 @@ public class UNIManager
         CAN.logout(this);
         super.finalize();
     }
+    //endregion
 
+    //region 加载与保存
     public UNIFrame getUNIFrame(File dir, String name)
     {
         if(!loadYaml(dir, name + ".yaml", false))
             return null;
         return uniFrame;
+    }
+
+    public void loadEmptyEditor()
+    {
+        Property.setIDCursor(0);
+        cache.clear();
     }
 
     public void loadUNIEditor(File dir, String name)
@@ -87,6 +101,7 @@ public class UNIManager
         YAMLParser parser = new YAMLParser(dir, yaml);
         if(!parser.loadYAML()) return false;
         Brief yamlBrief = parser.getBrief();
+        yamlBrief.thumb = GraphicsTools.loadFromLocal(dir, "thumb");
 
         if(editMode)
         {
@@ -168,7 +183,9 @@ public class UNIManager
         yaml.saveYAML();
         GraphicsTools.saveToLocal(dir, "thumb", brief.thumb);
     }
+    //endregion
 
+    //region 元素管理
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void updateMenu(CAN.Package.Menu.Request pkg)
     {
@@ -201,7 +218,9 @@ public class UNIManager
                 break;
         }
     }
+    //endregion
 
+    //region 编辑管理
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void commit(CAN.Package.EditorCommit pkg)
     {
@@ -217,4 +236,52 @@ public class UNIManager
                 break;
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void updatePlayer(CAN.Package.Player.Request pkg)
+    {
+        UNIView uniView = new UNIView(context);
+        UNIFrame uniFrame = convertToPlayer();
+        uniView.setUNIFrame(uniFrame);
+        CAN.Control.updatePlayer(uniView);
+    }
+
+    private UNIFrame convertToPlayer()
+    {
+        UNIFrame uniFrame = new UNIFrame();
+        uniFrame.init();
+        uniFrame.setLoop(true);
+
+        List<KeyFrame> keyFrames = cache.getFrames();
+        SparseIntArray idMap = new SparseIntArray();
+        int mapIndex = 0;
+
+        for(KeyFrame keyframe : keyFrames)
+        {
+            FrameProperty frameProperty = keyframe.getFrameProperty();
+            uniFrame.addFrame(frameProperty.interval, frameProperty.duration);
+
+            SparseArray<KeyFrame.Element> elements = keyframe.getElements();
+
+            for(int i = 0, size = elements.size(); i < size; i++)
+            {
+                KeyFrame.Element element = elements.valueAt(i);
+
+                // ID 归一化
+                int oldID = element.property.ID;
+                int newID = idMap.indexOfValue(oldID);
+                if(newID < 0)
+                {
+                    idMap.put(mapIndex, oldID);
+                    newID = mapIndex++;
+                }
+
+                UNIElement uniElement = elementManager.getElement(element.url);
+                uniFrame.addElement(newID, uniElement, element.property);
+            }
+        }
+
+        return uniFrame;
+    }
+    //endregion
 }

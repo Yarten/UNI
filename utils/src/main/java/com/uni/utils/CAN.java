@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.SparseArray;
 import android.view.Menu;
+import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -122,6 +123,25 @@ public class CAN
 
             public Brief brief;
             public State state;
+        }
+
+        public static class Player
+        {
+            public enum Type
+            {
+                Play
+            }
+
+            public static class Request
+            {
+                public Type what;
+            }
+
+            public static class Reply
+            {
+                public Type what;
+                public Playable player;
+            }
         }
     }
 
@@ -302,6 +322,20 @@ public class CAN
             Package.Menu.Reply pkg = new Package.Menu.Reply();
             pkg.what = Package.Menu.Type.MainMenu;
             pkg.items = items;
+            CAN.send(pkg);
+        }
+
+        public static void requirePlayer()
+        {
+            Package.Player.Request pkg = new Package.Player.Request();
+            pkg.what = Package.Player.Type.Play;
+            CAN.send(pkg);
+        }
+
+        public static void updatePlayer(Playable player)
+        {
+            Package.Player.Reply pkg = new Package.Player.Reply();
+            pkg.player = player;
             CAN.send(pkg);
         }
     }

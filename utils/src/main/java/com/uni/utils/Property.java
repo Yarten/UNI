@@ -24,7 +24,7 @@ public class Property
      */
     public static final int NaN = -1;
 
-    public static final int ElementLength = 100;
+    public static final int ElementLength = 300;
     public static final int FrameWidth = 1600;
     public static final int FrameHeight = 900;
 
@@ -100,7 +100,6 @@ public class Property
 
         final Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        Log.i("Scale", scale + "");
         matrix.postRotate(rotation);
 
         Bitmap temp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
@@ -163,6 +162,7 @@ public class Property
         mid.y = (int)calculate(last.y, next.y, alpha);
         mid.opacity = calculate(last.opacity, next.opacity, alpha);
         mid.scale = calculate(last.scale, next.scale, alpha);
+        mid.rotation = calculate(last.rotation, next.rotation, alpha);
 
         return mid;
     }
