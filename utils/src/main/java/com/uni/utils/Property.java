@@ -24,7 +24,7 @@ public class Property
      */
     public static final int NaN = -1;
 
-    public static final int ElementLength = 300;
+    public static final int ElementLength = 100;
     public static final int FrameWidth = 1600;
     public static final int FrameHeight = 900;
 
